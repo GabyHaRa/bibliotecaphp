@@ -1,0 +1,79 @@
+/* Colores bootstrap */
+.bg-primary {
+    background-color: #4494eb !important;
+}
+.bg-blue {
+  background-color: #015bae !important;
+}
+.bg-secondary {
+    background-color: #f7be1e!important;
+}
+.text-primary {
+  color: #4494eb !important
+}
+/*Mondapick*/
+@font-face {
+    font-family: 'Mondapik';
+    src: url('../fonts/Mondapik.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.mondapick-font {
+  font-family: 'Mondapik', sans-serif;
+  color: white;
+  font-size: 50px;
+}
+/*Montserrat*/
+@font-face {
+    font-family: 'Montserrat-Regular';
+    src: url('../fonts/Montserrat-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.montserrat-font {
+    font-family: 'Montserrat-Regular', sans-serif;
+    color: white;
+    font-size: 50px;
+    font-weight: bolder;
+}
+/*Montserrat-SemiBold*/
+@font-face {
+    font-family: 'Montserrat-SemiBold';
+    src: url('../fonts/Montserrat-SemiBold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.montserrat-semibold-font {
+    font-family: 'Montserrat-Semibold', sans-serif;
+    color: white;
+    font-size: 50px;
+}
+
+/*Degradado*/
+.gradient{
+    width: 100%;
+    height: 20px;
+    background-image: linear-gradient(#f7be1e,  #4494eb);
+}
+
+/*Seleccionar Autor / Titulo*/
+a.dropdown-item:hover{
+  background-color: #00305e;
+  border-color: #0058a8 !important;
+}
+li.border:hover{
+  transform: translate(-5px, -5px);
+  background-color: #0058a8;
+  box-shadow: 5px 5px 5px #00305e;
+  border-color: #0058a8 !important;
+}
+
+/*Input búsqueda*/
+input.bg-transparent{
+  width: 95%;
+}
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit;
+}
