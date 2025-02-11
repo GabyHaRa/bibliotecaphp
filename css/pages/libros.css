@@ -3,7 +3,7 @@
     background-color: #4494eb !important;
 }
 .bg-secondary {
-    background-color: #f7be1e!important;
+    background-color: #f7be1e !important;
 }
 .bg-blue {
   background-color: #015bae !important;
@@ -11,38 +11,41 @@
 .text-primary {
   color: #4494eb !important
 }
+.text-blue {
+  color: #015bae !important
+}
 .border-primary {
     border-color: #4494eb !important;
 }
 /*Mondapick*/
 @font-face {
     font-family: 'Mondapik';
-    src: url('../fonts/Mondapik.ttf') format('truetype');
+    src: url('fonts/Mondapick.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 .mondapick-font {
-  font-family: 'Mondapik', sans-serif;
+  font-family: 'Mondapick', sans-serif;
   color: white;
   font-size: 50px;
 }
 /*Montserrat*/
 @font-face {
     font-family: 'Montserrat-Regular';
-    src: url('../fonts/Montserrat-Regular.ttf') format('truetype');
+    src: url('fonts/Montserrat-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 .montserrat-font {
     font-family: 'Montserrat-Regular', sans-serif;
-    color: white;
+    color: #015bae;
     font-size: 50px;
     font-weight: bolder;
 }
 /*Montserrat-SemiBold*/
 @font-face {
     font-family: 'Montserrat-SemiBold';
-    src: url('../fonts/Montserrat-SemiBold.ttf') format('truetype');
+    src: url('fonts/Montserrat-SemiBold.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -53,24 +56,16 @@
 }
 
 /*Degradado*/
-.gradient{
+.gradient {
     width: 100%;
     height: 20px;
     background-image: linear-gradient(#f7be1e,  white);
 }
 
-/*Filtro y orden*/
-button.text-white:hover{
+/*Hover*/
+.hover:hover {
   transform: translate(-5px, -5px);
-  background-color: #0058a8;
-  box-shadow: 5px 5px 5px #00305e;
-  border-color: #0058a8 !important;
-}
-
-/*Filtro*/
-li.border:hover{
-  transform: translate(-5px, -5px);
-  background-color: #0058a8;
+  background-color: #0058a8 !important;
   box-shadow: 5px 5px 5px #00305e;
   border-color: #0058a8 !important;
 }

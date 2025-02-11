@@ -47,10 +47,10 @@ require "../database/conexion.php";
                 <img src="../img/Triangulo_blanco.png" alt="Desplegar">
               </button>
               <ul id="listaDropdown" class="dropdown-menu dropdown-menu-end bg-transparent border-0">
-                <li class="dropdown-item border border-5 border-light p-1 px-4 mb-2 rounded-start-pill text-white fw-bolder fs-4">
+                <li class="dropdown-item border border-5 border-light p-1 px-4 mb-2 rounded-start-pill text-white fw-bolder mondapick-font fs-4">
                     Título
                 </li>
-                <li class="dropdown-item border border-5 border-light p-1 px-4 rounded-start-pill text-white fw-bolder fs-4">
+                <li class="dropdown-item border border-5 border-light p-1 px-4 rounded-start-pill text-white fw-bolder mondapick-font fs-4">
                     Autor
                 </li>
               </ul>
@@ -61,7 +61,7 @@ require "../database/conexion.php";
           <div class="col-8">
             <div class="w-75 border border-5 border-light p-2 mt-2 mb-2 ml-1 rounded-end-pill text-start">
               <img class="m-1" src="../img/search.png" alt="Lupa">
-              <input class="bg-transparent border border-0" type="text" placeholder="Buscar">
+              <input class="bg-transparent border border-0 mondapick-font fs-6 fw-bold text-blue" type="text" placeholder="Buscar">
             </div>
           </div>
         </div>
