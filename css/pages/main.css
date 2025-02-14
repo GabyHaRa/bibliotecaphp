@@ -61,7 +61,7 @@ a.dropdown-item:hover{
   background-color: #00305e;
   border-color: #0058a8 !important;
 }
-li.border:hover{
+.hover:hover{
   transform: translate(-5px, -5px);
   background-color: #0058a8;
   box-shadow: 5px 5px 5px #00305e;
@@ -69,11 +69,14 @@ li.border:hover{
 }
 
 /*Input búsqueda*/
-input.bg-transparent{
+input{
   width: 95%;
 }
 input:focus {
     outline: none !important;
     box-shadow: none !important;
     border-color: inherit;
+}
+input:hover{
+  cursor: pointer;
 }

@@ -26,11 +26,14 @@ while ($fila = $resultado->fetch_assoc()) {
 }
 
 //Lista dinámica de libros.
-$query = "SELECT tbl_libros.libro_titulo, tbl_autores.autor_nombre, tbl_libros.libro_año, tbl_libros.libro_pensamiento, tbl_libros.libro_tipo FROM tbl_libros INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id";
+$query = "SELECT 
+tbl_libros.libro_id, tbl_libros.libro_titulo, tbl_autores.autor_nombre, tbl_libros.libro_año, tbl_libros.libro_pensamiento, tbl_libros.libro_tipo 
+FROM tbl_libros INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id";
 $resultado = $mysqli1->query($query);
 $libros = [];
 while ($fila = $resultado->fetch_assoc()) {
     $libros [] = [
+        "id" => $fila["libro_id"],
         "titulo" => $fila["libro_titulo"],
         "autor" => $fila["autor_nombre"],
         "año" => $fila["libro_año"],
@@ -68,7 +71,7 @@ while ($fila = $resultado->fetch_assoc()) {
                         <ul class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                 <div id="dropendGenero" class="btn-group rounded-pill dropend w-100" data-bs-auto-close="inside">
-                                    <button type="button" class="btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button id="btnGenero" type="button" class="btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Género
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
@@ -86,11 +89,11 @@ while ($fila = $resultado->fetch_assoc()) {
                                 </div>
                             </li>
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div id="dropendGenero" class="btn-group dropend w-100" data-bs-auto-close="inside">
-                                    <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div id="dropendPensamiento" class="btn-group dropend w-100" data-bs-auto-close="inside">
+                                    <button id="btnPensamiento" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Pensamiento
                                     </button>
-                                    <ul id="submenuGenero" class="dropdown-menu mx-5 bg-transparent border-0">
+                                    <ul class="dropdown-menu mx-5 bg-transparent border-0">
                                         <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
                                             <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
                                             Bioético
@@ -120,8 +123,8 @@ while ($fila = $resultado->fetch_assoc()) {
                                 <script src="../js/pages/libros.js"></script>
                             </li>
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div id="dropendGenero" class="btn-group dropend w-100" data-bs-auto-close="inside">
-                                    <button type="button" class=" btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div id="dropendPais" class="btn-group dropend w-100" data-bs-auto-close="inside">
+                                    <button id="btnPais" type="button" class=" btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         País
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
@@ -140,10 +143,10 @@ while ($fila = $resultado->fetch_assoc()) {
                             </li>
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                 <div id="dropendGenero" class="btn-group dropend w-100" data-bs-auto-close="inside">
-                                    <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button id="btnAno" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Año
                                     </button>
-                                    <ul id="submenuGenero" class="dropdown-menu mx-5 bg-transparent border-0">
+                                    <ul class="dropdown-menu mx-5 bg-transparent border-0">
                                         <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
                                             <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
                                             antes - 1800
@@ -164,8 +167,8 @@ while ($fila = $resultado->fetch_assoc()) {
                                 </div>
                             </li>
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div id="dropendGenero" class="btn-group dropend w-100" data-bs-auto-close="inside">
-                                    <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div id="dropendIdioma" class="btn-group dropend w-100" data-bs-auto-close="inside">
+                                    <button id="btnIdioma" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Idioma
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
@@ -210,35 +213,31 @@ while ($fila = $resultado->fetch_assoc()) {
                 </div>
                 <!--Botones-->
                 <div class="col-1 text-end">
-                    <button class="btn">
-                        <a href="index.php">
-                            <img src="../img/volver.png" alt="Volver">
-                        </a>
-                    </button>
+                    <a href="../index.php">
+                        <img src="../img/volver.png" alt="Volver">
+                    </a>
                 </div>
                 <div class="col-1 text-start">
-                    <button class="btn">
-                        <a href="index.php">
-                            <img src="../img/inicio.png" alt="Inicio">
-                        </a>
-                    </button>
+                    <a href="../index.php">
+                        <img src="../img/inicio.png" alt="Inicio">
+                    </a>
                 </div>
             </div>
         </header>
 
         <div class="gradient"></div>
 
-    <section>
+        <section>
             <?php if (!empty($libros)): ?>
                 <?php foreach ($libros as $libro): ?>
                     <article class="row align-items-start m-5">
                         <div class="col-2">
-                            <button class="btn">
+                            <a class="btn">
                                 <img src="../img/libro.png" alt="libro">
-                            </button>
+                            </a>
                         </div>
                         <div class="col-10 px-1">
-                            <button class="btn text-blue text-start">
+                            <a href="libro.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn text-blue text-start">
                                 <p class="fw-bolder fs-1 m-0 mb-1">
                                     <?php echo htmlspecialchars($libro["titulo"]); ?>
                                 </p>
@@ -252,9 +251,9 @@ while ($fila = $resultado->fetch_assoc()) {
                                     <?php echo htmlspecialchars($libro["pensamiento"]); ?>
                                 </p>
                                 <p class="fs-2 m-0">
-                                    <?php echo htmlspecialchars($libro["genero"]); ?>
+                                    <?php echo htmlspecialchars($libro["tipo"]); ?>
                                 </p>
-                            </button>
+                            </a>
                         </div>
                 </article>
                 <?php endforeach; ?>
@@ -263,7 +262,8 @@ while ($fila = $resultado->fetch_assoc()) {
                     No hay títulos disponibles.
                 </p>
             <?php endif; ?>
-    </section>
+        </section>
+    </div>
     <script src="../js/bootstrap.bundle.min.js"></script>
     <script src="../js/pages/libros.js"></script>
 </body>

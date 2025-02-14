@@ -1,0 +1,36 @@
+.bg-secondary {
+    background-color: #f7be1e !important;
+}
+.text-primary {
+  color: #4494eb !important
+}
+.border-primary {
+    border-color: #4494eb !important;
+}
+/*Mondapick*/
+@font-face {
+    font-family: 'Mondapik';
+    src: url('fonts/Mondapick.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.mondapick-font {
+  font-family: 'Mondapick', sans-serif;
+  color: white;
+  font-size: 50px;
+}
+
+/*Degradado*/
+.gradient {
+    width: 100%;
+    height: 20px;
+    background-image: linear-gradient(#f7be1e,  white);
+}
+
+/*Hover*/
+.hover:hover {
+  transform: translate(-5px, -5px);
+  background-color: #0058a8 !important;
+  box-shadow: 5px 5px 5px #00305e;
+  border-color: #0058a8 !important;
+}
