@@ -63,15 +63,15 @@ while ($fila = $resultado->fetch_assoc()) {
                 </div>
                 <!--Filtro-->
                 <div class="col-2 text-end">
-                    <div class="dropdown form-select-lg" data-bs-auto-close="outside">
+                    <div class="dropdown form-select-lg">
                         <button type="button" class="hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             Filtros
                             <img src="../img/filtro.png" alt="Filtro">
                         </button>
                         <ul class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div id="dropendGenero" class="btn-group rounded-pill dropend w-100" data-bs-auto-close="inside">
-                                    <button id="btnGenero" type="button" class="btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="btn-group rounded-pill dropend w-100">
+                                    <button type="button" class="btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Género
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
@@ -89,8 +89,8 @@ while ($fila = $resultado->fetch_assoc()) {
                                 </div>
                             </li>
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div id="dropendPensamiento" class="btn-group dropend w-100" data-bs-auto-close="inside">
-                                    <button id="btnPensamiento" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="btn-group dropend w-100">
+                                    <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Pensamiento
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
@@ -123,8 +123,8 @@ while ($fila = $resultado->fetch_assoc()) {
                                 <script src="../js/pages/libros.js"></script>
                             </li>
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div id="dropendPais" class="btn-group dropend w-100" data-bs-auto-close="inside">
-                                    <button id="btnPais" type="button" class=" btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="btn-group dropend w-100">
+                                    <button type="button" class=" btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         País
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
@@ -142,8 +142,8 @@ while ($fila = $resultado->fetch_assoc()) {
                                 </div>
                             </li>
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div id="dropendGenero" class="btn-group dropend w-100" data-bs-auto-close="inside">
-                                    <button id="btnAno" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="btn-group dropend w-100">
+                                    <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Año
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
@@ -167,8 +167,8 @@ while ($fila = $resultado->fetch_assoc()) {
                                 </div>
                             </li>
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div id="dropendIdioma" class="btn-group dropend w-100" data-bs-auto-close="inside">
-                                    <button id="btnIdioma" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="btn-group dropend w-100">
+                                    <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Idioma
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
