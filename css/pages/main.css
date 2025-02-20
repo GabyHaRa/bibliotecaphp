@@ -14,7 +14,7 @@
 /*Mondapick*/
 @font-face {
     font-family: 'Mondapick';
-    src: url('fonts/Mondapick.ttf') format('truetype');
+    src: url('../fonts/Mondapick.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -26,27 +26,82 @@
 /*Montserrat*/
 @font-face {
     font-family: 'Montserrat-Regular';
-    src: url('fonts/Montserrat-Regular.ttf') format('truetype');
+    src: url('../fonts/Montserrat-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 .montserrat-font {
     font-family: 'Montserrat-Regular', sans-serif;
-    color: white;
+    color: #015bae;
     font-size: 50px;
     font-weight: bolder;
 }
 /*Montserrat-SemiBold*/
 @font-face {
     font-family: 'Montserrat-SemiBold';
-    src: url('fonts/Montserrat-SemiBold.ttf') format('truetype');
+    src: url('../fonts/Montserrat-SemiBold.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 .montserrat-semibold-font {
     font-family: 'Montserrat-Semibold', sans-serif;
-    color: white;
-    font-size: 50px;
+    color: #015bae;
+    font-size: 75px;
+}
+
+/*Degradado*/
+.gradient {
+    width: 100%;
+    height: 20px;
+    background-image: linear-gradient(#f7be1e,  white);
+}
+
+/*Hover*/
+.hover:hover {
+  transform: translate(-5px, -5px);
+  background-color: #0058a8 !important;
+  box-shadow: 5px 5px 5px #00305e;
+  border-color: #0058a8 !important;
+}
+
+/*Título*/
+h1.interlineado {
+  line-height: 1;
+}
+
+/*Texto descripción*/
+p.interlineado {
+  line-height: 1.2;
+}
+
+/*Descripción y resumen*/
+article.texto {
+  width: 60%;
+}
+
+/*Input comentarios*/
+input {
+  width: 100%;
+}
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit;
+}
+input:hover{
+  cursor: pointer;
+}
+/*Mondapick*/
+@font-face {
+    font-family: 'Mondapick';
+    src: url('fonts/Mondapick.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.mondapick-font {
+  font-family: 'Mondapick', sans-serif;
+  color: white;
+  font-size: 50px;
 }
 
 /*Degradado*/

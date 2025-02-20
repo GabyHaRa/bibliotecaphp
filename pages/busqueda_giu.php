@@ -2,51 +2,35 @@
 require "../database/conexion.php";
 
 //Lista dinámica de géneros.
-$query = "SELECT libro_tipo FROM tbl_libros WHERE libro_tipo IS NOT NULL GROUP BY libro_tipo ORDER BY libro_tipo ASC";
+$query = "SELECT giu_tipo FROM tbl_libros_giu WHERE giu_tipo IS NOT NULL GROUP BY giu_tipo ORDER BY giu_tipo ASC";
 $resultado = $mysqli1->query($query);
 $generos = [];
 while ($fila = $resultado->fetch_assoc()) {
-    $generos[] = $fila["libro_tipo"];
-}
-
-//Lista dinámica de países.
-$query = "SELECT libro_pais FROM tbl_libros WHERE libro_pais IS NOT NULL GROUP BY libro_pais ORDER BY libro_pais ASC";
-$resultado = $mysqli1->query($query);
-$paises = [];
-while ($fila = $resultado->fetch_assoc()) {
-    $paises[] = $fila["libro_pais"];
-}
-
-//Lista dinámica de idiomas.
-$query = "SELECT libro_idioma FROM tbl_libros WHERE libro_idioma IS NOT NULL GROUP BY libro_idioma ORDER BY libro_idioma ASC";
-$resultado = $mysqli1->query($query);
-$idiomas = [];
-while ($fila = $resultado->fetch_assoc()) {
-    $idiomas[] = $fila["libro_idioma"];
+    $generos[] = $fila["giu_tipo"];
 }
 
 //Lista dinámica de años.
-$query = "SELECT libro_año FROM tbl_libros WHERE libro_año IS NOT NULL GROUP BY libro_año ORDER BY libro_año ASC";
+$query = "SELECT giu_año FROM tbl_libros_giu GROUP BY giu_año ORDER BY giu_año ASC";
 $resultado = $mysqli1->query($query);
 $anos = [];
 while ($fila = $resultado->fetch_assoc()) {
-    $anos[] = $fila["libro_año"];
+    $anos[] = $fila["giu_año"];
 }
 
 //Lista dinámica de libros.
 $query = "SELECT 
-tbl_libros.libro_id, tbl_libros.libro_titulo, tbl_autores.autor_nombre, tbl_libros.libro_año, tbl_libros.libro_pensamiento, tbl_libros.libro_tipo 
-FROM tbl_libros INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id";
+tbl_libros_giu.giu_id, tbl_libros_giu.giu_titulo, tbl_investigadores.investigador_nombre, tbl_libros_giu.giu_año, tbl_libros_giu.giu_tipo 
+FROM tbl_libros_giu INNER JOIN tbl_investigadores ON tbl_libros_giu.autor_id = tbl_investigadores.investigador_id";
 $resultado = $mysqli1->query($query);
 $libros = [];
 while ($fila = $resultado->fetch_assoc()) {
     $libros [] = [
-        "id" => $fila["libro_id"],
-        "titulo" => $fila["libro_titulo"],
-        "autor" => $fila["autor_nombre"],
-        "año" => $fila["libro_año"],
-        "pensamiento" => $fila["libro_pensamiento"],
-        "tipo" => $fila["libro_tipo"]
+        "id" => $fila["giu_id"],
+        "titulo" => $fila["giu_titulo"],
+        "autor" => $fila["investigador_nombre"],
+        "año" => $fila["giu_año"],
+        "pensamiento" => $fila["giu_pensamiento"],
+        "tipo" => $fila["giu_tipo"]
     ];
 }
 ?>
@@ -57,7 +41,7 @@ while ($fila = $resultado->fetch_assoc()) {
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="../img/icono.png" />
     <link rel="stylesheet" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/pages/libros.css">
+    <link rel="stylesheet" href="../css/pages/busqueda_giu.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Archivos UNICAB</title>
 </head>
@@ -155,16 +139,22 @@ while ($fila = $resultado->fetch_assoc()) {
                                         Año
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
-                                        <?php if (!empty($anos)): ?>
-                                        <?php foreach ($anos as $ano): ?>
-                                            <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($ano); ?>" aria-label="Checkbox">
-                                                <?php echo htmlspecialchars($ano); ?>
-                                            </li>
-                                        <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">No hay años disponibles</li>
-                                        <?php endif; ?>
+                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
+                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
+                                            antes - 1800
+                                        </li>
+                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
+                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
+                                            1800 - 1900
+                                        </li>
+                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
+                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
+                                            1900 - 2000
+                                        </li>
+                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
+                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
+                                            2000 - actual
+                                        </li>
                                     </ul>
                                 </div>
                             </li>

@@ -1,8 +1,12 @@
+/*Colores bootstrap*/
 .bg-secondary {
     background-color: #f7be1e !important;
 }
 .bg-primary {
     background-color: #c0daf2 !important;
+}
+.bg-blue {
+    background-color: #015bae!important;
 }
 .text-primary {
   color: #4494eb !important
@@ -11,7 +15,10 @@
   color: #015bae !important
 }
 .border-primary {
-    border-color: #4494eb !important;
+  border-color: #4494eb !important;
+}
+.border-blue {
+  border-color: #015bae !important;
 }
 /*Mondapick*/
 @font-face {
@@ -58,38 +65,40 @@
     background-image: linear-gradient(#f7be1e,  white);
 }
 
-/*Hover*/
-.hover:hover {
-  transform: translate(-5px, -5px);
-  background-color: #0058a8 !important;
-  box-shadow: 5px 5px 5px #00305e;
-  border-color: #0058a8 !important;
-}
-
-/*Título*/
-h1.interlineado {
-  line-height: 1;
-}
-
-/*Texto descripción*/
-p.interlineado {
+/*Descripción*/
+.interlineado {
   line-height: 1.2;
 }
-
-/*Descripción y resumen*/
-article.texto {
-  width: 60%;
-}
-
-/*Input comentarios*/
-input {
-  width: 100%;
-}
-input:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: inherit;
-}
-input:hover{
+.hover:hover{
   cursor: pointer;
+}
+
+/*Div en el que está la foto del autor*/
+.bg-blue {
+    width: 175px;
+    height: 175px;
+}
+
+.borde {
+  border-color: #4494eb #4494eb;
+  border-width: 3px 12px;
+  border-style: solid solid;
+  border-radius: 70px 70px 70px 70px;
+}
+
+/*Sección lista dinámica de autores*/
+div.impar {
+    border-radius: 20px 100px 0px 0px;
+}
+div.par {
+    border-radius: 100px 20px 0px 0px;
+}
+div.bg-blue {
+    border-radius: 20px 20px 20px 20px;
+}
+div.impar-blue {
+  transform: translate(-50px, 0px);
+}
+div.par-blue {
+  transform: translate(50px, 0px);
 }

@@ -10,7 +10,7 @@ require "database/conexion.php";
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/pages/main.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>principal</title>
+    <title>Biblioteca UNICAB</title>
   </head>
 
   <body class="bg-primary">
@@ -26,7 +26,7 @@ require "database/conexion.php";
         <a href="https://unicab.org/#blog-area" class="hover col-2 text-center text-white fs-3 btn btn-transparent rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light  w-auto">
           Blog conectados
         </a>
-        <a href="" class="hover col-2 text-center text-white fs-3 btn btn-transparent rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light w-auto">
+        <a href="pages/giu.php" class="hover col-2 text-center text-white fs-3 btn btn-transparent rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light w-auto">
           GIU
         </a>
       </div>

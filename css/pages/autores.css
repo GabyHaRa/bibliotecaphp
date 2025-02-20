@@ -4,26 +4,11 @@
 .bg-primary {
     background-color: #c0daf2 !important;
 }
-.text-primary {
-  color: #4494eb !important
+.bg-blue {
+    background-color: #015bae!important;
 }
 .text-blue {
   color: #015bae !important
-}
-.border-primary {
-    border-color: #4494eb !important;
-}
-/*Mondapick*/
-@font-face {
-    font-family: 'Mondapick';
-    src: url('../fonts/Mondapick.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-.mondapick-font {
-  font-family: 'Mondapick', sans-serif;
-  color: white;
-  font-size: 50px;
 }
 /*Montserrat*/
 @font-face {
@@ -58,38 +43,13 @@
     background-image: linear-gradient(#f7be1e,  white);
 }
 
-/*Hover*/
-.hover:hover {
-  transform: translate(-5px, -5px);
-  background-color: #0058a8 !important;
-  box-shadow: 5px 5px 5px #00305e;
-  border-color: #0058a8 !important;
+/*Sección lista dinámica de autores*/
+div.impar {
+    border-radius: 20px 100px 0px 0px;
 }
-
-/*Título*/
-h1.interlineado {
-  line-height: 1;
+div.par {
+    border-radius: 100px 20px 0px 0px;
 }
-
-/*Texto descripción*/
-p.interlineado {
-  line-height: 1.2;
-}
-
-/*Descripción y resumen*/
-article.texto {
-  width: 60%;
-}
-
-/*Input comentarios*/
-input {
-  width: 100%;
-}
-input:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: inherit;
-}
-input:hover{
-  cursor: pointer;
+div.bg-blue {
+    border-radius: 20px 20px 20px 20px;
 }
