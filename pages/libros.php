@@ -35,13 +35,20 @@ while ($fila = $resultado->fetch_assoc()) {
 
 //Lista dinámica de libros.
 $query = "SELECT 
-tbl_libros.libro_id, tbl_libros.libro_titulo, tbl_autores.autor_nombre, tbl_libros.libro_año, tbl_libros.libro_pensamiento, tbl_libros.libro_tipo 
+tbl_libros.libro_id, 
+tbl_libros.libro_imagen, 
+tbl_libros.libro_titulo, 
+tbl_autores.autor_nombre, 
+tbl_libros.libro_año, 
+tbl_libros.libro_pensamiento, 
+tbl_libros.libro_tipo 
 FROM tbl_libros INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id";
 $resultado = $mysqli1->query($query);
 $libros = [];
 while ($fila = $resultado->fetch_assoc()) {
     $libros [] = [
         "id" => $fila["libro_id"],
+        "imagen" => $fila["libro_imagen"],
         "titulo" => $fila["libro_titulo"],
         "autor" => $fila["autor_nombre"],
         "año" => $fila["libro_año"],
@@ -235,7 +242,11 @@ while ($fila = $resultado->fetch_assoc()) {
                     <article class="row align-items-start m-5">
                         <div class="col-2">
                             <a href="libro.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn">
-                                <img src="../img/libro.png" alt="libro">
+                                <?php if (!empty($libro["imagen"])): ?>
+                                    <img src="<?php echo htmlspecialchars($libro["imagen"]); ?>" alt="libro" class="libro-imagen text-start">
+                                <?php else: ?>
+                                    <img src="../img/libro.png" alt="libro">
+                                <?php endif; ?>
                             </a>
                         </div>
                         <div class="col-10 px-1">

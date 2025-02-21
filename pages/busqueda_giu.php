@@ -19,13 +19,14 @@ while ($fila = $resultado->fetch_assoc()) {
 
 //Lista dinámica de libros.
 $query = "SELECT 
-tbl_libros_giu.giu_id, tbl_libros_giu.giu_titulo, tbl_investigadores.investigador_nombre, tbl_libros_giu.giu_año, tbl_libros_giu.giu_tipo 
+tbl_libros_giu.giu_id, tbl_libros_giu.libro_imagen, tbl_libros_giu.giu_titulo, tbl_investigadores.investigador_nombre, tbl_libros_giu.giu_año, tbl_libros_giu.giu_tipo 
 FROM tbl_libros_giu INNER JOIN tbl_investigadores ON tbl_libros_giu.autor_id = tbl_investigadores.investigador_id";
 $resultado = $mysqli1->query($query);
 $libros = [];
 while ($fila = $resultado->fetch_assoc()) {
     $libros [] = [
         "id" => $fila["giu_id"],
+        "imagen" => $fila["libro_imagen"],
         "titulo" => $fila["giu_titulo"],
         "autor" => $fila["investigador_nombre"],
         "año" => $fila["giu_año"],
@@ -43,7 +44,7 @@ while ($fila = $resultado->fetch_assoc()) {
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/pages/busqueda_giu.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archivos UNICAB</title>
+    <title>Archivos GIU</title>
 </head>
 
 <body>
@@ -83,96 +84,18 @@ while ($fila = $resultado->fetch_assoc()) {
                             <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                 <div class="btn-group dropend w-100">
                                     <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Pensamiento
-                                    </button>
-                                    <ul class="dropdown-menu mx-5 bg-transparent border-0">
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            Bioético
-                                        </li>
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            Español
-                                        </li>
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            Inglés
-                                        </li>
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            Matemático
-                                        </li>
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            Social
-                                        </li>
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            Tecnológico
-                                        </li>
-                                    </ul>
-                                </div>
-                                <script src="../js/pages/libros.js"></script>
-                            </li>
-                            <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div class="btn-group dropend w-100">
-                                    <button type="button" class=" btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
-                                        País
-                                    </button>
-                                    <ul class="dropdown-menu mx-5 bg-transparent border-0">
-                                        <?php if (!empty($paises)): ?>
-                                        <?php foreach ($paises as $pais): ?>
-                                            <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($pais); ?>" aria-label="Checkbox">
-                                                <?php echo htmlspecialchars($pais); ?>
-                                            </li>
-                                        <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">No hay países disponibles</li>
-                                        <?php endif; ?>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div class="btn-group dropend w-100">
-                                    <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                         Año
                                     </button>
                                     <ul class="dropdown-menu mx-5 bg-transparent border-0">
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            antes - 1800
-                                        </li>
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            1800 - 1900
-                                        </li>
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            1900 - 2000
-                                        </li>
-                                        <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                            <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
-                                            2000 - actual
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
-                                <div class="btn-group dropend w-100">
-                                    <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Idioma
-                                    </button>
-                                    <ul class="dropdown-menu mx-5 bg-transparent border-0">
-                                        <?php if (!empty($idiomas)): ?>
-                                        <?php foreach ($idiomas as $idioma): ?>
+                                        <?php if (!empty($anos)): ?>
+                                        <?php foreach ($anos as $ano): ?>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($idioma); ?>" aria-label="Checkbox">
-                                                <?php echo htmlspecialchars($idioma); ?>
+                                                <input class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($ano); ?>" aria-label="Checkbox">
+                                                <?php echo htmlspecialchars($ano); ?>
                                             </li>
                                         <?php endforeach; ?>
                                         <?php else: ?>
-                                            <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">No hay idiomas disponibles</li>
+                                            <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">No hay años disponibles</li>
                                         <?php endif; ?>
                                     </ul>
                                 </div>
@@ -205,7 +128,7 @@ while ($fila = $resultado->fetch_assoc()) {
                 </div>
                 <!--Botones-->
                 <div class="col-1 text-end">
-                    <a href="../index.php">
+                    <a href="giu.php">
                         <img src="../img/volver.png" alt="Volver">
                     </a>
                 </div>
@@ -224,12 +147,16 @@ while ($fila = $resultado->fetch_assoc()) {
                 <?php foreach ($libros as $libro): ?>
                     <article class="row align-items-start m-5">
                         <div class="col-2">
-                            <a href="libro.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn">
-                                <img src="../img/libro.png" alt="libro">
+                            <a href="libro_giu.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn">
+                                <?php if (!empty($libro["imagen"])): ?>
+                                    <img src="<?php echo htmlspecialchars($libro["imagen"]); ?>" alt="libro" class="libro-imagen text-start">
+                                <?php else: ?>
+                                    <img src="../img/libro.png" alt="libro">
+                                <?php endif; ?>
                             </a>
                         </div>
                         <div class="col-10 px-1">
-                            <a href="libro.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn text-blue text-start">
+                            <a href="libro_giu.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn text-blue text-start">
                                 <p class="fw-bolder fs-1 m-0 mb-1">
                                     <?php echo htmlspecialchars($libro["titulo"]); ?>
                                 </p>
@@ -247,7 +174,7 @@ while ($fila = $resultado->fetch_assoc()) {
                                 </p>
                             </a>
                         </div>
-                </article>
+                    </article>
                 <?php endforeach; ?>
             <?php else: ?>
                 <p class="my-3 text-blue text-start px-1 fw-bolder fs-3">
@@ -257,6 +184,6 @@ while ($fila = $resultado->fetch_assoc()) {
         </section>
     </div>
     <script src="../js/bootstrap.bundle.min.js"></script>
-    <script src="../js/pages/libros.js"></script>
+    <script src="../js/pages/busqueda_giu.js"></script>
 </body>
 </html>

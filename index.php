@@ -1,5 +1,58 @@
 <?php
 require "database/conexion.php";
+//Búsqueda de Autor
+$query = isset($_GET['query']) ? $_GET['query'] : '';
+$tipo = isset($_GET['tipo']) ? $_GET['tipo'] : 'titulo';
+
+if ($tipo == 'autor') {
+    $sql = "SELECT autor_id, autor_foto, autor_nombre, autor_descripcion FROM tbl_autores WHERE autor_nombre LIKE ?";
+    $stmt = $mysqli1->prepare($sql);
+    $searchTerm = '%' . $query . '%';
+    $stmt->bind_param("s", $searchTerm);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    $autores = [];
+    while ($fila = $resultado->fetch_assoc()) {
+        $autores[] = [
+            "id" => $fila["autor_id"],
+            "foto" => $fila["autor_foto"],
+            "nombre" => $fila["autor_nombre"],
+            "descripcion" => $fila["autor_descripcion"]
+        ];
+    }
+    header("Location: pages/autores.php?query=" . urlencode($query));
+    exit();
+} else {
+  //Búsqueda de Título
+    $sql = "SELECT 
+    tbl_libros.libro_id, 
+    tbl_libros.libro_imagen, 
+    tbl_libros.libro_titulo, 
+    tbl_autores.autor_nombre, 
+    tbl_libros.libro_año, 
+    tbl_libros.libro_pensamiento, 
+    tbl_libros.libro_tipo 
+    FROM tbl_libros INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id WHERE libro_titulo LIKE ?";
+    $stmt = $mysqli1->prepare($sql);
+    $searchTerm = '%' . $query . '%';
+    $stmt->bind_param("s", $searchTerm);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    $libros = [];
+    while ($fila = $resultado->fetch_assoc()) {
+        $libros[] = [
+            "id" => $fila["libro_id"],
+            "imagen" => $fila["libro_imagen"],
+            "titulo" => $fila["libro_titulo"],
+            "autor" => $fila["autor_nombre"],
+            "año" => $fila["libro_año"],
+            "pensamiento" => $fila["libro_pensamiento"],
+            "tipo" => $fila["libro_tipo"]
+        ];
+    }
+    header("Location: pages/libros.php?query=" . urlencode($query));
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -47,10 +100,10 @@ require "database/conexion.php";
                 <img src="img/Triangulo_blanco.png" alt="Desplegar">
               </button>
               <ul id="listaDropdown" class="dropdown-menu dropdown-menu-end bg-transparent border-0">
-                <li class="hover dropdown-item btn border border-5 border-light p-1 px-4 mb-2 rounded-start-pill text-white fw-bolder mondapick-font fs-4">
+                <li class="hover dropdown-item btn border border-5 border-light p-1 px-4 mb-2 rounded-start-pill text-white fw-bolder mondapick-font fs-4" onclick="seleccionarTipoBusqueda('titulo')">
                     Título
                 </li>
-                <li class="hover dropdown-item btn border border-5 border-light p-1 px-4 rounded-start-pill text-white fw-bolder mondapick-font fs-4">
+                <li class="hover dropdown-item btn border border-5 border-light p-1 px-4 rounded-start-pill text-white fw-bolder mondapick-font fs-4" onclick="seleccionarTipoBusqueda('autor')">
                     Autor
                 </li>
               </ul>
@@ -61,7 +114,10 @@ require "database/conexion.php";
           <div class="col-8">
             <div class="w-75 border border-5 border-light p-2 mt-2 mb-2 ml-1 rounded-end-pill text-start">
               <img class="m-1" src="img/search.png" alt="Lupa">
-              <input class="bg-transparent border border-0 mondapick-font fs-6 fw-bold text-blue" type="text" placeholder="Buscar">
+              <form method="GET">
+                <input type="hidden" name="tipo" id="tipoBusqueda" value="titulo">
+                  <input class="bg-transparent border border-0 mondapick-font fs-6 fw-bold text-blue" type="text" placeholder="Buscar" name="consulta">
+              </form>
             </div>
           </div>
         </div>

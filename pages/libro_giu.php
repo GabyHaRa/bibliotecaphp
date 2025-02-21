@@ -1,26 +1,29 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+error_reporting(E_ALL);
 require "../database/conexion.php";
 //Libro dinámico.
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $libro_id = $_GET['id'];
+    $giu_id = $_GET['id'];
     $query = "SELECT 
-        tbl_libros.libro_titulo,
-        tbl_libros.libro_imagen,
-        tbl_libros.libro_año, 
-        tbl_libros.libro_pensamiento, 
-        tbl_libros.libro_tipo, 
-        tbl_libros.libro_isbn, 
-        tbl_libros.libro_enlace, 
-        tbl_libros.libro_resumen, 
-        tbl_autores.autor_id, 
-        tbl_autores.autor_nombre,
-        tbl_comentarios.comentario_texto
-    FROM tbl_libros 
-    INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id 
-    LEFT JOIN tbl_comentarios ON tbl_libros.libro_id = tbl_comentarios.libro_id
-    WHERE tbl_libros.libro_id = ?";
+        tbl_libros_giu.libro_imagen, 
+        tbl_libros_giu.giu_titulo, 
+        tbl_libros_giu.giu_año, 
+        tbl_libros_giu.giu_tipo, 
+        tbl_libros_giu.giu_isbn, 
+        tbl_libros_giu.giu_enlace, 
+        tbl_libros_giu.giu_resumen, 
+        tbl_investigadores.investigador_id, 
+        tbl_investigadores.investigador_nombre,
+        tbl_comentarios_giu.comentario_texto
+    FROM tbl_libros_giu 
+    INNER JOIN tbl_investigadores ON tbl_libros_giu.autor_id = tbl_investigadores.investigador_id 
+    LEFT JOIN tbl_comentarios_giu ON tbl_libros_giu.giu_id = tbl_comentarios_giu.giu_id
+    WHERE tbl_libros_giu.giu_id = ?";
     $stmt = $mysqli1->prepare($query);
-    $stmt->bind_param("i", $libro_id);
+    $stmt->bind_param("i", $giu_id);
     $stmt->execute();
     $resultado = $stmt->get_result();
     $libros = [];
@@ -28,15 +31,13 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         if (empty($libros)) {
             $libros[] = [
                 "imagen" => $fila["libro_imagen"],
-                "titulo" => $fila["libro_titulo"],
-                "año" => $fila["libro_año"],
-                "pensamiento" => $fila["libro_pensamiento"],
-                "tipo" => $fila["libro_tipo"],
-                "isbn" => $fila["libro_isbn"],
-                "enlace" => $fila["libro_enlace"],
-                "resumen" => $fila["libro_resumen"],
-                "autor_id" => $fila["autor_id"],
-                "autor" => $fila["autor_nombre"],
+                "titulo" => $fila["giu_titulo"],
+                "año" => $fila["giu_año"],
+                "tipo" => $fila["giu_tipo"],
+                "isbn" => $fila["giu_isbn"],
+                "enlace" => $fila["giu_enlace"],
+                "resumen" => $fila["giu_resumen"],
+                "autor" => $fila["investigador_nombre"],
                 "comentarios" => []
             ];
         }
@@ -45,12 +46,12 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         }
     }
     if (empty($libros)) {
-        header("Location: libros.php");
+        header("Location: busqueda_giu.php");
         exit();
     }
     $libro = $libros[0];
 } else {
-    header("Location: libros.php");
+    header("Location: busqueda_giu.php");
     exit();
 }
 ?>
@@ -61,7 +62,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="../img/icono.png" />
     <link rel="stylesheet" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/pages/libro.css">
+    <link rel="stylesheet" href="../css/pages/libro_giu.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($libro['titulo']); ?></title>
 </head>
@@ -75,7 +76,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                 </div>
                 <!--Botones-->
                 <div class="col-1 text-end">
-                    <a href="libros.php">
+                    <a href="busqueda_giu.php">
                         <img src="../img/volver.png" alt="Volver">
                     </a>
                 </div>
@@ -102,24 +103,19 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                         </a>
                     </div>
                     <div class="col-9">
-                        <h1 class="interlineado ms-2 fw-semibold text-blue montserrat-semibold-font">
+                        <h1 class="interlineado fw-semibold text-blue montserrat-semibold-font">
                             <?php echo htmlspecialchars($libro["titulo"]); ?>
                         </h1>
-                        <a href="autor.php?id=<?php echo htmlspecialchars($libro["autor_id"]); ?>" class="btn">
-                            <p class="fs-1 fw-light my-3 text-blue montserrat-font">
-                                <?php echo htmlspecialchars($libro["autor"]); ?>
-                            </p>
-                        </a>
-                        <p class="fs-1 fw-light mb-4 ms-2 text-blue montserrat-font">
+                        <p class="fs-1 fw-light my-4 text-blue montserrat-font">
+                            <?php echo htmlspecialchars($libro["autor"]); ?>
+                        </p>
+                        <p class="fs-1 fw-light my-4 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["año"]); ?>
                         </p>
-                        <p class="fs-1 fw-light my-4 ms-2 text-blue montserrat-font">
-                            <?php echo htmlspecialchars($libro["pensamiento"]); ?>
-                        </p>
-                        <p class="fs-1 fw-light my-4 ms-2 text-blue montserrat-font">
+                        <p class="fs-1 fw-light my-4 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["tipo"]); ?>
                         </p>
-                        <p class="fs-3 fw-light my-4 ms-2 text-blue montserrat-font">
+                        <p class="fs-3 fw-light my-4 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["isbn"]); ?>
                         </p>
                     </div>

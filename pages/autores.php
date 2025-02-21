@@ -1,12 +1,18 @@
 <?php
 require "../database/conexion.php";
 //Lista dinámica de autores.
-$query = "SELECT autor_id, autor_nombre, autor_descripcion FROM tbl_autores";
-$resultado = $mysqli1->query($query);
+$query = isset($_GET['query']) ? $_GET['query'] : '';
+$sql = "SELECT autor_id, autor_foto, autor_nombre, autor_descripcion FROM tbl_autores WHERE autor_nombre LIKE ?";
+$stmt = $mysqli1->prepare($sql);
+$searchTerm = '%' . $query . '%';
+$stmt = brind_param("s", $searchTerm);
+$stmt->execute();
+$resultado = $stmt->get_result();
 $autores = [];
 while ($fila = $resultado->fetch_assoc()) {
     $autores [] = [
         "id" => $fila["autor_id"],
+        "foto" => $fila["autor_foto"],
         "nombre" => $fila["autor_nombre"],
         "descripcion" => $fila["autor_descripcion"]
     ];
@@ -54,7 +60,11 @@ while ($fila = $resultado->fetch_assoc()) {
                     <div class="<?php echo $index % 2 === 0 ? 'impar' : 'par'; ?> row bg-primary mx-5 mb-5">
                         <?php if ($index % 2 === 0): ?>
                             <div class="col-auto bg-blue h-50">
-                                <img class="m-1 mt-4 rounded-circle" src="../img/autor.png" alt="foto">
+                                <?php if (!empty($autor["foto"])): ?>
+                                    <img class="my-3 rounded-circle autor-foto" src="<?php echo htmlspecialchars($autor["foto"]); ?>" alt="foto">
+                                <?php else: ?>
+                                    <img src="../img/autor.png" alt="foto del autor" class="my-3 rounded-circle autor-foto">
+                                <?php endif; ?>
                             </div>
                             <div class="col m-2 text-start text-blue me-5">
                                 <p class="fs-2 montserrat-semibold-font">
@@ -82,7 +92,11 @@ while ($fila = $resultado->fetch_assoc()) {
                                 </p>
                             </div>
                             <div class="col-auto bg-blue h-50">
-                                <img class="m-1 mt-4 rounded-circle" src="../img/autor.png" alt="foto">
+                                <?php if (!empty($autor["foto"])): ?>
+                                    <img class="my-3 rounded-circle autor-foto" src="<?php echo htmlspecialchars($autor["foto"]); ?>" alt="foto">
+                                <?php else: ?>
+                                    <img src="../img/autor.png" alt="foto del autor" class="my-3 rounded-circle autor-foto">
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                         </div>

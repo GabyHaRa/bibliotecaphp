@@ -44,3 +44,9 @@
   box-shadow: 5px 5px 5px #00305e;
   border-color: #0058a8 !important;
 }
+
+/*Foto del autor*/
+img.libro-imagen {
+    width: 250px !important;
+    height: 330px !important;
+}

@@ -71,3 +71,9 @@
 .bg-blue {
     box-shadow: 0px 0px 20px 3px gray;
 }
+
+/*Foto del autor*/
+img.rounded-circle.autor-foto {
+    width: 175px !important;
+    height: 175px !important;
+}

@@ -9,3 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+function seleccionarTipoBusqueda(tipo) {
+    document.getElementById("tipoBusqueda").value = tipo;
+    document.getElementById("botonDropdown").innerText = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+}

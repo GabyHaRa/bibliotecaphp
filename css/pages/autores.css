@@ -53,3 +53,9 @@ div.par {
 div.bg-blue {
     border-radius: 20px 20px 20px 20px;
 }
+
+/*Foto del autor*/
+img.rounded-circle.autor-foto {
+    width: 100px !important;
+    height: 100px !important;
+}

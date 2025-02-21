@@ -3,7 +3,7 @@ require "../database/conexion.php";
 //Autor dinámico.
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $autor_id = $_GET['id'];
-    $query = "SELECT tbl_autores.autor_nombre, tbl_autores.autor_descripcion, tbl_libros.libro_titulo 
+    $query = "SELECT tbl_autores.autor_foto, tbl_autores.autor_nombre, tbl_autores.autor_descripcion, tbl_libros.libro_titulo 
     FROM tbl_autores LEFT JOIN tbl_libros ON tbl_autores.autor_id = tbl_libros.autor_id WHERE tbl_autores.autor_id = ?";
     $stmt = $mysqli1->prepare($query);
     $stmt->bind_param("i", $autor_id);
@@ -13,6 +13,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     while ($fila = $resultado->fetch_assoc()) {
         if (empty($autores)) {
             $autores[] = [
+                "foto" => $fila["autor_foto"],
                 "nombre" => $fila["autor_nombre"],
                 "descripcion" => $fila["autor_descripcion"],
                 "libros" => []
@@ -70,8 +71,12 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         <section>
             <article class="row align-items-start m-5 ms-0">
                 <div class="col-auto pt-5">
-                    <div class="rounded-4 bg-blue p-5 mx-3 ms-5">
-                        <img src="../img/autor.png" alt="foto del autor">
+                    <div class="rounded-4 bg-blue p-4 mt-3 mx-3 ms-5">
+                        <?php if (!empty($autor["foto"])): ?>
+                            <img src="<?php echo htmlspecialchars($autor["foto"]); ?>" alt="foto del autor" class="rounded-circle autor-foto">
+                        <?php else: ?>
+                            <img src="../img/autor.png" alt="foto del autor" class="rounded-circle autor-foto">
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="col">
