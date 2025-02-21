@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     const dropdowns = document.querySelectorAll('.dropend .dropdown-toggle');
-    //Para que no se cierre el dropdown al clickear un dropend.
+    const filtrosForm = document.getElementById('filtrosForm');
+    const filtros = document.querySelectorAll('#filtro');
+    // Para que no se cierre el dropdown al clickear un dropend.
     dropdowns.forEach(dropdown => {
         dropdown.addEventListener('click', function (event) {
             event.stopPropagation();
@@ -13,6 +15,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     otherDropdown.setAttribute('aria-expanded', 'false');
                 }
             });
+        });
+    });
+    //Aplicar filtros al seleccionar una opción
+    filtros.forEach(filtro => {
+        filtro.addEventListener('change', function () {
+            filtrosForm.submit();
         });
     });
 });

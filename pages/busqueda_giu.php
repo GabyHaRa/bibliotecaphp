@@ -1,7 +1,7 @@
 <?php
 require "../database/conexion.php";
 
-//Lista dinámica de géneros.
+// Lista dinámica de géneros
 $query = "SELECT giu_tipo FROM tbl_libros_giu WHERE giu_tipo IS NOT NULL GROUP BY giu_tipo ORDER BY giu_tipo ASC";
 $resultado = $mysqli1->query($query);
 $generos = [];
@@ -9,7 +9,7 @@ while ($fila = $resultado->fetch_assoc()) {
     $generos[] = $fila["giu_tipo"];
 }
 
-//Lista dinámica de años.
+// Lista dinámica de años
 $query = "SELECT giu_año FROM tbl_libros_giu GROUP BY giu_año ORDER BY giu_año ASC";
 $resultado = $mysqli1->query($query);
 $anos = [];
@@ -17,22 +17,67 @@ while ($fila = $resultado->fetch_assoc()) {
     $anos[] = $fila["giu_año"];
 }
 
-//Lista dinámica de libros.
-$query = "SELECT 
-tbl_libros_giu.giu_id, tbl_libros_giu.libro_imagen, tbl_libros_giu.giu_titulo, tbl_investigadores.investigador_nombre, tbl_libros_giu.giu_año, tbl_libros_giu.giu_tipo 
-FROM tbl_libros_giu INNER JOIN tbl_investigadores ON tbl_libros_giu.autor_id = tbl_investigadores.investigador_id";
-$resultado = $mysqli1->query($query);
+// Lista dinámica de libros
+$query = isset($_GET["query"]) ? $_GET["query"] : "";
+$genero = isset($_GET["genero"]) ? $_GET["genero"] : [];
+$ano = isset($_GET["ano"]) ? $_GET["ano"] : [];
+$orden = isset($_GET["orden"]) ? $_GET["orden"] : "relevancia";
+$sql = "SELECT 
+tbl_libros_giu.giu_id, 
+tbl_libros_giu.libro_imagen, 
+tbl_libros_giu.giu_titulo, 
+tbl_investigadores.investigador_nombre, 
+tbl_libros_giu.giu_año, 
+tbl_libros_giu.giu_tipo 
+FROM tbl_libros_giu 
+INNER JOIN tbl_investigadores ON tbl_libros_giu.autor_id = tbl_investigadores.investigador_id 
+WHERE tbl_libros_giu.giu_titulo LIKE ?";
+$params = ["%$query%"];
+$types = "s";
+if (!empty($genero)) {
+    $sql .= " AND tbl_libros_giu.giu_tipo IN (". str_repeat("?,", count($genero) - 1) . "?)";
+    $params = array_merge($params, $genero);
+    $types .= str_repeat("s", count($genero));
+}
+if (!empty($ano)) {
+    $sql .= " AND tbl_libros_giu.giu_año IN (". str_repeat("?,", count($ano) - 1) . "?)";
+    $params = array_merge($params, $ano);
+    $types .= str_repeat("s", count($ano));
+}
+// Ordenar
+if ($orden == "ano_asc") {
+    $sql .= " ORDER BY tbl_libros_giu.giu_año ASC";
+} elseif ($orden == "ano_desc") {
+    $sql .= " ORDER BY tbl_libros_giu.giu_año DESC";
+} else {
+    $sql .= " ORDER BY tbl_libros_giu.giu_titulo ASC";
+}
+$stmt = $mysqli1->prepare($sql);
+$searchTerm = '%' . $query . '%';
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$resultado = $stmt->get_result();
 $libros = [];
 while ($fila = $resultado->fetch_assoc()) {
-    $libros [] = [
+    $libros[] = [
         "id" => $fila["giu_id"],
         "imagen" => $fila["libro_imagen"],
         "titulo" => $fila["giu_titulo"],
         "autor" => $fila["investigador_nombre"],
         "año" => $fila["giu_año"],
-        "pensamiento" => $fila["giu_pensamiento"],
         "tipo" => $fila["giu_tipo"]
     ];
+}
+
+// Mantener los filtros seleccionados
+function isChecked($name, $value) {
+    if (isset($_GET[$name]) && is_array($_GET[$name])) {
+        return in_array($value, $_GET[$name]) ? 'checked' : '';
+    }
+    return '';
+}
+function isSelected($name, $value) {
+    return (isset($_GET[$name]) && $_GET[$name] == $value) ? 'checked' : '';
 }
 ?>
 
@@ -54,8 +99,9 @@ while ($fila = $resultado->fetch_assoc()) {
                 <div class="col-6 text-start px-5">
                     <img src="../img/logo.png" alt="Logo UNICAB">
                 </div>
+                <form class="col-4 row" id="filtrosForm" action="busqueda_giu.php" method="GET">
                 <!--Filtro-->
-                <div class="col-2 text-end">
+                <div class="col-6 text-end">
                     <div class="dropdown form-select-lg">
                         <button type="button" class="hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             Filtros
@@ -71,7 +117,7 @@ while ($fila = $resultado->fetch_assoc()) {
                                         <?php if (!empty($generos)): ?>
                                         <?php foreach ($generos as $genero): ?>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($genero); ?>" aria-label="Checkbox">
+                                                <input id="filtro" class="form-check-input" type="checkbox" name="genero[]" value="<?php echo htmlspecialchars($genero); ?>" aria-label="Checkbox" <?php echo isChecked('genero', $genero); ?>>
                                                 <?php echo htmlspecialchars($genero); ?>
                                             </li>
                                         <?php endforeach; ?>
@@ -90,7 +136,7 @@ while ($fila = $resultado->fetch_assoc()) {
                                         <?php if (!empty($anos)): ?>
                                         <?php foreach ($anos as $ano): ?>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="form-check-input" type="checkbox" value="<?php echo htmlspecialchars($ano); ?>" aria-label="Checkbox">
+                                                <input id="filtro" class="form-check-input" type="checkbox" name="ano[]" value="<?php echo htmlspecialchars($ano); ?>" aria-label="Checkbox" <?php echo isChecked('ano', $ano); ?>>
                                                 <?php echo htmlspecialchars($ano); ?>
                                             </li>
                                         <?php endforeach; ?>
@@ -104,7 +150,7 @@ while ($fila = $resultado->fetch_assoc()) {
                     </div>
                 </div>
                 <!--Orden-->
-                <div class="col-2 text-start">
+                <div class="col-6 text-start">
                     <div class="dropdown form-select-lg">
                         <button type="button" class="btn btn-transparent hover text-white text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                            <img src="../img/orden.png" alt="Orden">
@@ -112,20 +158,21 @@ while ($fila = $resultado->fetch_assoc()) {
                         </button>
                         <ul id="listaDropdown" class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
                           <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                              <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
+                              <input id="filtro" class="form-check-input" type="radio" name="orden" value="relevancia" aria-label="Radio" <?php echo isSelected('orden', 'relevancia'); ?>>
                               Mayor relevancia
                             </li>
                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                              <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
+                              <input id="filtro" class="form-check-input" type="radio" name="orden" value="ano_asc" aria-label="Radio" <?php echo isSelected('orden', 'ano_asc'); ?>>
                               Año ascendente
                             </li>
                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                              <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox">
+                              <input id="filtro" class="form-check-input" type="radio" name="orden" value="ano_desc" aria-label="Radio" <?php echo isSelected('orden', 'ano_desc'); ?>>
                               Año descendente
                             </li>
                         </ul>
                     </div>
                 </div>
+                </form>
                 <!--Botones-->
                 <div class="col-1 text-end">
                     <a href="giu.php">
@@ -165,9 +212,6 @@ while ($fila = $resultado->fetch_assoc()) {
                                 </p>
                                 <p class="fs-2 m-0">
                                     <?php echo htmlspecialchars($libro["año"]); ?>
-                                </p>
-                                <p class="fs-2 m-0">
-                                    <?php echo htmlspecialchars($libro["pensamiento"]); ?>
                                 </p>
                                 <p class="fs-2 m-0">
                                     <?php echo htmlspecialchars($libro["tipo"]); ?>

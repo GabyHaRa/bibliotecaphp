@@ -58,6 +58,16 @@
     font-size: 75px;
 }
 
+/*Input búsqueda*/
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit;
+}
+input:hover{
+  cursor: pointer;
+}
+
 /*Degradado*/
 .gradient {
     width: 100%;

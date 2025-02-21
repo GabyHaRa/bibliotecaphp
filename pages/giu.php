@@ -55,9 +55,14 @@ while ($fila = $resultado->fetch_assoc()) {
                     <h2 class="mondapick-font text-primary mt-5 mb-5">
                         ¿Qué buscas?
                     </h2>
-                    <div class="w-50 border border-3 border-primary p-2 mx-auto mt-2 mb-2 ml-1 rounded-pill text-start">
-                        <img class="mb-2 mx-4 " src="../img/search_azul.png" alt="Lupa">
-                        <input class="bg-transparent border border-0 mondapick-font fs-3 fw-bold text-blue" type="text" placeholder="Buscar">
+                    <!--Input búsqueda-->
+                    <div class="row w-50 border border-3 border-primary p-2 mx-auto mt-2 mb-2 ml-1 rounded-pill text-start">
+                        <div class="col-auto">
+                        <img class="mt-1 mx-4 " src="../img/search_azul.png" alt="Lupa">
+                        </div>
+                        <form class="col" action="busqueda_giu.php" method="GET">
+                            <input class="w-100 bg-transparent border border-0 mondapick-font fs-3 fw-bold text-blue" type="text" placeholder="Buscar" name="query">
+                        </form>
                     </div>
                 </article>
                 <article class="text-center">

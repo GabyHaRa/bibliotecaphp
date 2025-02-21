@@ -5,7 +5,7 @@ $query = isset($_GET['query']) ? $_GET['query'] : '';
 $sql = "SELECT autor_id, autor_foto, autor_nombre, autor_descripcion FROM tbl_autores WHERE autor_nombre LIKE ?";
 $stmt = $mysqli1->prepare($sql);
 $searchTerm = '%' . $query . '%';
-$stmt = brind_param("s", $searchTerm);
+$stmt->bind_param("s", $searchTerm);
 $stmt->execute();
 $resultado = $stmt->get_result();
 $autores = [];
