@@ -4,9 +4,9 @@ require "../database/conexion.php";
 // Lista dinámica de géneros
 $query = "SELECT libro_tipo FROM tbl_libros WHERE libro_tipo IS NOT NULL GROUP BY libro_tipo ORDER BY libro_tipo ASC";
 $resultado = $mysqli1->query($query);
-$generos = [];
+$tipos = [];
 while ($fila = $resultado->fetch_assoc()) {
-    $generos[] = $fila["libro_tipo"];
+    $tipos[] = $fila["libro_tipo"];
 }
 
 // Lista dinámica de países
@@ -35,7 +35,7 @@ while ($fila = $resultado->fetch_assoc()) {
 
 // Lista dinámica de libros
 $query = isset($_GET["query"]) ? $_GET["query"] : "";
-$genero = isset($_GET["genero"]) ? $_GET["genero"] : [];
+$tipo = isset($_GET["tipo"]) ? $_GET["tipo"] : [];
 $pensamiento = isset($_GET["pensamiento"]) ? $_GET["pensamiento"] : [];
 $pais = isset($_GET["pais"]) ? $_GET["pais"] : [];
 $ano = isset($_GET["ano"]) ? $_GET["ano"] : [];
@@ -53,10 +53,10 @@ tbl_libros.libro_tipo
 FROM tbl_libros INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id WHERE tbl_libros.libro_titulo LIKE ?";
 $params = ["%$query%"];
 $types = "s";
-if (!empty($genero)) {
-    $sql .= " AND tbl_libros.libro_tipo IN (". str_repeat("?,", count($genero) - 1) . "?)";
-    $params = array_merge($params, $genero);
-    $types .= str_repeat("s", count($genero));
+if (!empty($tipo)) {
+    $sql .= " AND tbl_libros.libro_tipo IN (". str_repeat("?,", count($tipo) - 1) . "?)";
+    $params = array_merge($params, $tipo);
+    $types .= str_repeat("s", count($tipo));
 }
 if (!empty($pensamiento)) {
     $sql .= " AND tbl_libros.libro_pensamiento IN (". str_repeat("?,", count($pensamiento) - 1) . "?)";
@@ -133,11 +133,14 @@ function isSelected($name, $value) {
                 <div class="col-6 text-start px-5">
                     <img src="../img/logo.png" alt="Logo UNICAB">
                 </div>
-                <form class="col-4 row" id="filtrosForm" action="libros.php" method="GET">
+                <form class="col-4 row" id="filtros-form" action="libros.php" method="GET">
+                    <?php if (isset($_GET['query'])): ?>
+                        <input type="hidden" name="query" value="<?php echo htmlspecialchars($_GET['query']); ?>">
+                    <?php endif; ?>
                     <!--Filtro-->
                     <div class="text-end col-6">
                         <div class="dropdown form-select-lg">
-                            <button type="button" class="hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="filtros hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filtros
                                 <img src="../img/filtro.png" alt="Filtro">
                             </button>
@@ -148,13 +151,13 @@ function isSelected($name, $value) {
                                             Género
                                         </button>
                                         <ul class="dropdown-menu mx-5 bg-transparent border-0">
-                                            <?php if (!empty($generos)): ?>
-                                            <?php foreach ($generos as $genero): ?>
-                                                <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                    <input id="filtro" class="form-check-input" type="checkbox" name="genero[]" value="<?php echo htmlspecialchars($genero); ?>" aria-label="Checkbox" <?php echo isChecked('genero', $genero); ?>>
-                                                    <?php echo htmlspecialchars($genero); ?>
-                                                </li>
-                                            <?php endforeach; ?>
+                                            <?php if (!empty($tipos)): ?>
+                                                <?php foreach ($tipos as $tipo): ?>
+                                                    <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
+                                                        <input class="checkbox form-check-input" type="checkbox" name="tipo[]" value="<?php echo htmlspecialchars($tipo); ?>" aria-label="Checkbox" <?php echo isChecked('tipo', $tipo); ?>>
+                                                        <?php echo htmlspecialchars($tipo); ?>
+                                                    </li>
+                                                <?php endforeach; ?>
                                             <?php else: ?>
                                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">No hay géneros disponibles</li>
                                             <?php endif; ?>
@@ -168,27 +171,27 @@ function isSelected($name, $value) {
                                         </button>
                                         <ul class="dropdown-menu mx-5 bg-transparent border-0">
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input id="filtro" class="form-check-input" type="checkbox" name="pensamiento[]" value="Bioético" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Bioético'); ?>>
+                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Bioético" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Bioético'); ?>>
                                                 Bioético
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input id="filtro" class="form-check-input" type="checkbox" name="pensamiento[]" value="Español" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Español'); ?>>
+                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Español" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Español'); ?>>
                                                 Español
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input id="filtro" class="form-check-input" type="checkbox" name="pensamiento[]" value="Inglés" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Inglés'); ?>>
+                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Inglés" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Inglés'); ?>>
                                                 Inglés
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input id="filtro" class="form-check-input" type="checkbox" name="pensamiento[]" value="Matemático" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Matemático'); ?>>
+                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Matemático" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Matemático'); ?>>
                                                 Matemático
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input id="filtro" class="form-check-input" type="checkbox" name="pensamiento[]" value="Social" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Social'); ?>>
+                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Social" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Social'); ?>>
                                                 Social
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input id="filtro" class="form-check-input" type="checkbox" name="pensamiento[]" value="Tecnológico" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Tecnológico'); ?>>
+                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Tecnológico" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Tecnológico'); ?>>
                                                 Tecnológico
                                             </li>
                                         </ul>
@@ -204,7 +207,7 @@ function isSelected($name, $value) {
                                             <?php if (!empty($paises)): ?>
                                             <?php foreach ($paises as $pais): ?>
                                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                    <input id="filtro" class="form-check-input" type="checkbox" name="pais[]" value="<?php echo htmlspecialchars($pais); ?>" aria-label="Checkbox" <?php echo isChecked('pais', $pais); ?>>
+                                                    <input class="checkbox form-check-input" type="checkbox" name="pais[]" value="<?php echo htmlspecialchars($pais); ?>" aria-label="Checkbox" <?php echo isChecked('pais', $pais); ?>>
                                                     <?php echo htmlspecialchars($pais); ?>
                                                 </li>
                                             <?php endforeach; ?>
@@ -223,7 +226,7 @@ function isSelected($name, $value) {
                                             <?php if (!empty($anos)): ?>
                                             <?php foreach ($anos as $ano): ?>
                                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                    <input id="filtro" class="form-check-input" type="checkbox" name="ano[]" value="<?php echo htmlspecialchars($ano); ?>" aria-label="Checkbox" <?php echo isChecked('ano', $ano); ?>>
+                                                    <input class="checkbox form-check-input" type="checkbox" name="ano[]" value="<?php echo htmlspecialchars($ano); ?>" aria-label="Checkbox" <?php echo isChecked('ano', $ano); ?>>
                                                     <?php echo htmlspecialchars($ano); ?>
                                                 </li>
                                             <?php endforeach; ?>
@@ -242,7 +245,7 @@ function isSelected($name, $value) {
                                             <?php if (!empty($idiomas)): ?>
                                             <?php foreach ($idiomas as $idioma): ?>
                                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                    <input id="filtro" class="form-check-input" type="checkbox" name="idioma[]" value="<?php echo htmlspecialchars($idioma); ?>" aria-label="Checkbox" <?php echo isChecked('idioma', $idioma); ?>>
+                                                    <input class="checkbox form-check-input" type="checkbox" name="idioma[]" value="<?php echo htmlspecialchars($idioma); ?>" aria-label="Checkbox" <?php echo isChecked('idioma', $idioma); ?>>
                                                     <?php echo htmlspecialchars($idioma); ?>
                                                 </li>
                                             <?php endforeach; ?>
@@ -262,17 +265,17 @@ function isSelected($name, $value) {
                                <img src="../img/orden.png" alt="Orden">
                                 Ordenar
                             </button>
-                            <ul id="listaDropdown" class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
+                            <ul class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
                               <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                  <input id="filtro" class="form-check-input" type="radio" name="orden" value="relevancia" aria-label="Radio" <?php echo isSelected('orden', 'relevancia'); ?>>
+                                  <input class="radio form-check-input" type="radio" name="orden" value="relevancia" aria-label="Radio" <?php echo isSelected('orden', 'relevancia'); ?>>
                                   Mayor relevancia
                                 </li>
                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                  <input id="filtro" class="form-check-input" type="radio" name="orden" value="ano_asc" aria-label="Radio" <?php echo isSelected('orden', 'ano_asc'); ?>>
+                                  <input class="radio form-check-input" type="radio" name="orden" value="ano_asc" aria-label="Radio" <?php echo isSelected('orden', 'ano_asc'); ?>>
                                   Año ascendente
                                 </li>
                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                  <input id="filtro" class="form-check-input" type="radio" name="orden" value="ano_desc" aria-label="Radio" <?php echo isSelected('orden', 'ano_desc'); ?>>
+                                  <input class="radio form-check-input" type="radio" name="orden" value="ano_desc" aria-label="Radio" <?php echo isSelected('orden', 'ano_desc'); ?>>
                                   Año descendente
                                 </li>
                             </ul>
