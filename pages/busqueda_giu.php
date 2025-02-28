@@ -106,14 +106,14 @@ function isSelected($name, $value) {
                     <!--Filtro-->
                     <div class="col-6 text-end">
                         <div class="dropdown form-select-lg">
-                            <button id="filtro-padre" type="button" class="hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle show" data-bs-toggle="dropdown" aria-expanded="true">
+                            <button id="filtro-padre" type="button" class="hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filtros
                                 <img src="../img/filtro.png" alt="Filtro">
                             </button>
-                            <ul id="menu-padre" class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5 show" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(63.6667px, 67.6667px);" data-popper-placement="bottom-start">
+                            <ul id="menu-padre" class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
                                 <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                     <div class="btn-group rounded-pill dropend w-100">
-                                        <button type="button" class="filtro btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button id="tipo" type="button" class="filtro btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                             Tipo
                                         </button>
                                         <ul class="menu dropdown-menu mx-5 bg-transparent border-0">
@@ -132,7 +132,7 @@ function isSelected($name, $value) {
                                 </li>
                                 <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                     <div class="btn-group dropend w-100">
-                                        <button type="button" class="filtro btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button id="ano" type="button" class="filtro btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                             Año
                                         </button>
                                         <ul class="menu dropdown-menu mx-5 bg-transparent border-0">

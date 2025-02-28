@@ -8,7 +8,7 @@ require "../database/conexion.php";
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $giu_id = $_GET['id'];
     $query = "SELECT 
-        tbl_libros_giu.libro_imagen, 
+        tbl_libros_giu.giu_imagen, 
         tbl_libros_giu.giu_titulo, 
         tbl_libros_giu.giu_año, 
         tbl_libros_giu.giu_tipo, 
@@ -30,7 +30,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     while ($fila = $resultado->fetch_assoc()) {
         if (empty($libros)) {
             $libros[] = [
-                "imagen" => $fila["libro_imagen"],
+                "imagen" => $fila["giu_imagen"],
                 "titulo" => $fila["giu_titulo"],
                 "año" => $fila["giu_año"],
                 "tipo" => $fila["giu_tipo"],
