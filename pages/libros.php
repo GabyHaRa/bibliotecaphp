@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 require "../database/conexion.php";
 
 // Lista dinámica de géneros
@@ -35,8 +38,8 @@ while ($fila = $resultado->fetch_assoc()) {
 
 // Lista dinámica de libros
 $query = isset($_GET["query"]) ? $_GET["query"] : "";
-$tipo = isset($_GET["tipo"]) ? $_GET["tipo"] : [];
 $pensamiento = isset($_GET["pensamiento"]) ? $_GET["pensamiento"] : [];
+$tipo = isset($_GET["genero"]) ? $_GET["genero"] : [];
 $pais = isset($_GET["pais"]) ? $_GET["pais"] : [];
 $ano = isset($_GET["ano"]) ? $_GET["ano"] : [];
 $idioma = isset($_GET["idioma"]) ? $_GET["idioma"] : [];
@@ -53,15 +56,18 @@ tbl_libros.libro_tipo
 FROM tbl_libros INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id WHERE tbl_libros.libro_titulo LIKE ?";
 $params = ["%$query%"];
 $types = "s";
-if (!empty($tipo)) {
-    $sql .= " AND tbl_libros.libro_tipo IN (". str_repeat("?,", count($tipo) - 1) . "?)";
-    $params = array_merge($params, $tipo);
-    $types .= str_repeat("s", count($tipo));
-}
 if (!empty($pensamiento)) {
     $sql .= " AND tbl_libros.libro_pensamiento IN (". str_repeat("?,", count($pensamiento) - 1) . "?)";
     $params = array_merge($params, $pensamiento);
     $types .= str_repeat("s", count($pensamiento));
+}
+if (!empty($genero)) {
+    if (!is_array($genero)) {
+        $genero = [$genero];
+    }
+    $sql .= " AND tbl_libros.libro_tipo IN (". str_repeat("?,", count($genero) - 1) . "?)";
+    $params = array_merge($params, $genero);
+    $types .= str_repeat("s", count($genero));
 }
 if (!empty($pais)) {
     $sql .= " AND tbl_libros.libro_pais IN (". str_repeat("?,", count($pais) - 1) . "?)";
@@ -99,7 +105,7 @@ while ($fila = $resultado->fetch_assoc()) {
         "autor" => $fila["autor_nombre"],
         "año" => $fila["libro_año"],
         "pensamiento" => $fila["libro_pensamiento"],
-        "tipo" => $fila["libro_tipo"]
+        "genero" => $fila["libro_tipo"]
     ];
 }
 
@@ -140,21 +146,21 @@ function isSelected($name, $value) {
                     <!--Filtro-->
                     <div class="text-end col-6">
                         <div class="dropdown form-select-lg">
-                            <button type="button" class="filtros hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button id="filtro-padre" type="button" class="filtros hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filtros
                                 <img src="../img/filtro.png" alt="Filtro">
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
+                            <ul id="menu-padre" class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
                                 <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                     <div class="btn-group rounded-pill dropend w-100">
-                                        <button type="button" class="btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Género
+                                        <button id="tipo" type="button" class="btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Tipo
                                         </button>
-                                        <ul class="dropdown-menu mx-5 bg-transparent border-0">
+                                        <ul class="menu dropdown-menu mx-5 bg-transparent border-0">
                                             <?php if (!empty($tipos)): ?>
                                                 <?php foreach ($tipos as $tipo): ?>
                                                     <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                        <input class="checkbox form-check-input" type="checkbox" name="tipo[]" value="<?php echo htmlspecialchars($tipo); ?>" aria-label="Checkbox" <?php echo isChecked('tipo', $tipo); ?>>
+                                                        <input class="input form-check-input" type="checkbox" name="tipo[]" value="<?php echo htmlspecialchars($tipo); ?>" aria-label="Checkbox" <?php echo isChecked('tipo', $tipo); ?>>
                                                         <?php echo htmlspecialchars($tipo); ?>
                                                     </li>
                                                 <?php endforeach; ?>
@@ -166,32 +172,32 @@ function isSelected($name, $value) {
                                 </li>
                                 <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                     <div class="btn-group dropend w-100">
-                                        <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button id="pensamiento" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                             Pensamiento
                                         </button>
-                                        <ul class="dropdown-menu mx-5 bg-transparent border-0">
+                                        <ul class="menu dropdown-menu mx-5 bg-transparent border-0">
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Bioético" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Bioético'); ?>>
+                                                <input class="input form-check-input" type="checkbox" name="pensamiento[]" value="Bioético" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Bioético'); ?>>
                                                 Bioético
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Español" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Español'); ?>>
+                                                <input class="input form-check-input" type="checkbox" name="pensamiento[]" value="Español" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Español'); ?>>
                                                 Español
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Inglés" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Inglés'); ?>>
+                                                <input class="input form-check-input" type="checkbox" name="pensamiento[]" value="Inglés" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Inglés'); ?>>
                                                 Inglés
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Matemático" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Matemático'); ?>>
+                                                <input class="input form-check-input" type="checkbox" name="pensamiento[]" value="Matemático" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Matemático'); ?>>
                                                 Matemático
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Social" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Social'); ?>>
+                                                <input class="input form-check-input" type="checkbox" name="pensamiento[]" value="Social" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Social'); ?>>
                                                 Social
                                             </li>
                                             <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                <input class="checkbox form-check-input" type="checkbox" name="pensamiento[]" value="Tecnológico" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Tecnológico'); ?>>
+                                                <input class="input form-check-input" type="checkbox" name="pensamiento[]" value="Tecnológico" aria-label="Checkbox" <?php echo isChecked('pensamiento', 'Tecnológico'); ?>>
                                                 Tecnológico
                                             </li>
                                         </ul>
@@ -200,14 +206,14 @@ function isSelected($name, $value) {
                                 </li>
                                 <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                     <div class="btn-group dropend w-100">
-                                        <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button id="pais" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                             País
                                         </button>
-                                        <ul class="dropdown-menu mx-5 bg-transparent border-0">
+                                        <ul class="menu dropdown-menu mx-5 bg-transparent border-0">
                                             <?php if (!empty($paises)): ?>
                                             <?php foreach ($paises as $pais): ?>
                                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                    <input class="checkbox form-check-input" type="checkbox" name="pais[]" value="<?php echo htmlspecialchars($pais); ?>" aria-label="Checkbox" <?php echo isChecked('pais', $pais); ?>>
+                                                    <input class="input form-check-input" type="checkbox" name="pais[]" value="<?php echo htmlspecialchars($pais); ?>" aria-label="Checkbox" <?php echo isChecked('pais', $pais); ?>>
                                                     <?php echo htmlspecialchars($pais); ?>
                                                 </li>
                                             <?php endforeach; ?>
@@ -219,14 +225,14 @@ function isSelected($name, $value) {
                                 </li>
                                 <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                     <div class="btn-group dropend w-100">
-                                        <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button id="ano" type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                             Año
                                         </button>
-                                        <ul class="dropdown-menu mx-5 bg-transparent border-0">
+                                        <ul class="menu  dropdown-menu mx-5 bg-transparent border-0">
                                             <?php if (!empty($anos)): ?>
                                             <?php foreach ($anos as $ano): ?>
                                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                    <input class="checkbox form-check-input" type="checkbox" name="ano[]" value="<?php echo htmlspecialchars($ano); ?>" aria-label="Checkbox" <?php echo isChecked('ano', $ano); ?>>
+                                                    <input class="input form-check-input" type="checkbox" name="ano[]" value="<?php echo htmlspecialchars($ano); ?>" aria-label="Checkbox" <?php echo isChecked('ano', $ano); ?>>
                                                     <?php echo htmlspecialchars($ano); ?>
                                                 </li>
                                             <?php endforeach; ?>
@@ -238,14 +244,14 @@ function isSelected($name, $value) {
                                 </li>
                                 <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                     <div class="btn-group dropend w-100">
-                                        <button type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button id="idioma"type="button" class="btn btn-transparent text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                             Idioma
                                         </button>
-                                        <ul class="dropdown-menu mx-5 bg-transparent border-0">
+                                        <ul class="menu dropdown-menu mx-5 bg-transparent border-0">
                                             <?php if (!empty($idiomas)): ?>
                                             <?php foreach ($idiomas as $idioma): ?>
                                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                    <input class="checkbox form-check-input" type="checkbox" name="idioma[]" value="<?php echo htmlspecialchars($idioma); ?>" aria-label="Checkbox" <?php echo isChecked('idioma', $idioma); ?>>
+                                                    <input class="input form-check-input" type="checkbox" name="idioma[]" value="<?php echo htmlspecialchars($idioma); ?>" aria-label="Checkbox" <?php echo isChecked('idioma', $idioma); ?>>
                                                     <?php echo htmlspecialchars($idioma); ?>
                                                 </li>
                                             <?php endforeach; ?>
@@ -267,15 +273,15 @@ function isSelected($name, $value) {
                             </button>
                             <ul class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
                               <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                  <input class="radio form-check-input" type="radio" name="orden" value="relevancia" aria-label="Radio" <?php echo isSelected('orden', 'relevancia'); ?>>
+                                  <input class="input form-check-input" type="radio" name="orden" value="relevancia" aria-label="Radio" <?php echo isSelected('orden', 'relevancia'); ?>>
                                   Mayor relevancia
                                 </li>
                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                  <input class="radio form-check-input" type="radio" name="orden" value="ano_asc" aria-label="Radio" <?php echo isSelected('orden', 'ano_asc'); ?>>
+                                  <input class="input form-check-input" type="radio" name="orden" value="ano_asc" aria-label="Radio" <?php echo isSelected('orden', 'ano_asc'); ?>>
                                   Año ascendente
                                 </li>
                                 <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                  <input class="radio form-check-input" type="radio" name="orden" value="ano_desc" aria-label="Radio" <?php echo isSelected('orden', 'ano_desc'); ?>>
+                                  <input class="input form-check-input" type="radio" name="orden" value="ano_desc" aria-label="Radio" <?php echo isSelected('orden', 'ano_desc'); ?>>
                                   Año descendente
                                 </li>
                             </ul>
@@ -326,7 +332,7 @@ function isSelected($name, $value) {
                                     <?php echo htmlspecialchars($libro["pensamiento"]); ?>
                                 </p>
                                 <p class="fs-2 m-0">
-                                    <?php echo htmlspecialchars($libro["tipo"]); ?>
+                                    <?php echo htmlspecialchars($libro["genero"]); ?>
                                 </p>
                             </a>
                         </div>

@@ -7,14 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const filtroPadre = document.getElementById('filtro-padre');
     const menuPadre = document.getElementById('menu-padre');
     let estado = JSON.parse(localStorage.getItem('estado')) || {};
-    console.log("Estado antes de actualizar: ", estado);
+    
     // Obtener estado de los dropdowns guardados en localStorage.
     filtros.forEach(filtro => {
         const menu = filtro.closest('.dropend').querySelector('.menu');
         const filtroID = filtro.id;
         if (estado[filtroID]) {
-
-
             filtro.setAttribute('aria-expanded', 'false');
             filtro.classList.add('show');
             if (menu) {
@@ -71,9 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Guardar estado de los dropdowns
             estado = {};
             estado[filtroID] = !isExpanded;
-            console.log("Estado actualizado: ", estado);
             localStorage.setItem('estado', JSON.stringify(estado));
-            console.log("Estado guardado: ", localStorage.getItem('estado'));
         });
     });
 
