@@ -109,7 +109,7 @@ function isSelected($name, $value) {
                     <!--Filtro-->
                     <div class="col-6 text-end">
                         <div class="dropdown form-select-lg">
-                            <button id="filtro-padre" type="button" class="hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button id="filtro-padre" type="button" class="boton-padre hover text-white btn btn-transparent text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filtros
                                 <img src="../img/filtro.png" alt="Filtro">
                             </button>
@@ -158,7 +158,7 @@ function isSelected($name, $value) {
                     <!--Orden-->
                     <div class="col-6 text-start">
                         <div class="dropdown form-select-lg">
-                            <button type="button" class="btn btn-transparent hover text-white text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="boton-padre btn btn-transparent hover text-white text-start rounded-pill p-1 px-4 m-3 fw-bolder fs-4 mondapick-font border-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                <img src="../img/orden.png" alt="Orden">
                                 Ordenar
                             </button>
