@@ -319,19 +319,19 @@ function isSelected($name, $value) {
                         </div>
                         <div class="col-10 px-1">
                             <a href="libro.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn text-blue text-start">
-                                <p class="fw-bolder fs-1 m-0 mb-1">
+                                <p class="fw-bold fs-2 m-0">
                                     <?php echo htmlspecialchars($libro["titulo"]); ?>
                                 </p>
-                                <p class="fs-2 m-0">
+                                <p class="fs-3 m-0">
                                     <?php echo htmlspecialchars($libro["autor"]); ?>
                                 </p>
-                                <p class="fs-2 m-0">
+                                <p class="fs-3 m-0">
                                     <?php echo htmlspecialchars($libro["año"]); ?>
                                 </p>
-                                <p class="fs-2 m-0">
+                                <p class="fs-3 m-0">
                                     <?php echo htmlspecialchars($libro["pensamiento"]); ?>
                                 </p>
-                                <p class="fs-2 m-0">
+                                <p class="fs-3 m-0">
                                     <?php echo htmlspecialchars($libro["genero"]); ?>
                                 </p>
                             </a>
