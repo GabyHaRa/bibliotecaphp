@@ -1,9 +1,5 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 require "../database/conexion.php";
-
 // Libro dinámico.
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $libro_id = $_GET['id'];
@@ -27,7 +23,6 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $stmt->bind_param("i", $libro_id);
     $stmt->execute();
     $resultado = $stmt->get_result();
-
     if ($fila = $resultado->fetch_assoc()) {
 
         // Asignación de datos.

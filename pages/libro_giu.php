@@ -1,58 +1,75 @@
 <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-
 error_reporting(E_ALL);
 require "../database/conexion.php";
 //Libro dinámico.
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $giu_id = $_GET['id'];
-    $query = "SELECT 
-        tbl_libros_giu.giu_imagen, 
-        tbl_libros_giu.giu_titulo, 
-        tbl_libros_giu.giu_año, 
-        tbl_libros_giu.giu_tipo, 
-        tbl_libros_giu.giu_isbn, 
-        tbl_libros_giu.giu_enlace, 
-        tbl_libros_giu.giu_resumen, 
-        tbl_investigadores.investigador_id, 
-        tbl_investigadores.investigador_nombre,
-        tbl_comentarios_giu.comentario_texto
-    FROM tbl_libros_giu 
-    INNER JOIN tbl_investigadores ON tbl_libros_giu.autor_id = tbl_investigadores.investigador_id 
-    LEFT JOIN tbl_comentarios_giu ON tbl_libros_giu.giu_id = tbl_comentarios_giu.giu_id
-    WHERE tbl_libros_giu.giu_id = ?";
+
+    //Consulta de libro
+    $query = "SELECT giu_imagen, giu_titulo, giu_año, giu_tipo, giu_isbn, giu_enlace, giu_resumen FROM tbl_libros_giu 
+    WHERE giu_id = ?";
     $stmt = $mysqli1->prepare($query);
     $stmt->bind_param("i", $giu_id);
     $stmt->execute();
     $resultado = $stmt->get_result();
-    $libros = [];
-    while ($fila = $resultado->fetch_assoc()) {
-        if (empty($libros)) {
-            $libros[] = [
-                "imagen" => $fila["giu_imagen"],
-                "titulo" => $fila["giu_titulo"],
-                "año" => $fila["giu_año"],
-                "tipo" => $fila["giu_tipo"],
-                "isbn" => $fila["giu_isbn"],
-                "enlace" => $fila["giu_enlace"],
-                "resumen" => $fila["giu_resumen"],
-                "autor" => $fila["investigador_nombre"],
-                "comentarios" => []
-            ];
-        }
-        if (!empty($fila["comentario_texto"])) {
-            $libros[0]["comentarios"][] = $fila["comentario_texto"];
-        }
-    }
-    if (empty($libros)) {
+    if ($fila = $resultado->fetch_assoc()) {
+
+        // Asignación de datos.
+        $libro = [
+            "id" => $giu_id,
+            "imagen" => $fila["giu_imagen"],
+            "titulo" => $fila["giu_titulo"],
+            "año" => $fila["giu_año"],
+            "tipo" => $fila["giu_tipo"],
+            "isbn" => $fila["giu_isbn"],
+            "enlace" => $fila["giu_enlace"],
+            "resumen" => $fila["giu_resumen"],
+            "comentarios" => []
+        ];
+    } else {
         header("Location: busqueda_giu.php");
         exit();
     }
-    $libro = $libros[0];
+
+    // Consulta de comentarios.
+    $query = "SELECT comentario_texto FROM tbl_comentarios_giu WHERE giu_id = ?";
+    $stmt = $mysqli1->prepare($query);
+    $stmt->bind_param("i", $giu_id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    while ($fila = $resultado->fetch_assoc()) {
+        $libro["comentarios"][] = $fila["comentario_texto"];
+    }
 } else {
     header("Location: busqueda_giu.php");
     exit();
+}
+
+// Publicar comentario.
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $comentario = trim($_POST["comentario"]);
+    $giu_id = $_POST["giu_id"];
+
+    if (!empty($comentario) && is_numeric($giu_id)) {
+
+        // Insertar el comentario en la base de datos
+        $query = "INSERT INTO tbl_comentarios_giu (giu_id, comentario_texto) VALUES (?, ?)";
+        $stmt = $mysqli1->prepare($query);
+        $stmt->bind_param("is", $giu_id, $comentario);
+
+        if ($stmt->execute()) {
+
+            // Redirección de vuelta al libro para que no se envíe doble vez.
+            header("Location: libro_giu.php?id=" . $giu_id); 
+            exit();
+        } else {
+            echo "Error al guardar el comentario.";
+        }
+    } else {
+        echo "Comentario vacío o ID de libro inválido.";
+    }
 }
 ?>
 
@@ -107,9 +124,6 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                             <?php echo htmlspecialchars($libro["titulo"]); ?>
                         </h1>
                         <p class="fs-1 fw-light my-4 text-blue montserrat-font">
-                            <?php echo htmlspecialchars($libro["autor"]); ?>
-                        </p>
-                        <p class="fs-1 fw-light my-4 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["año"]); ?>
                         </p>
                         <p class="fs-1 fw-light my-4 text-blue montserrat-font">
@@ -132,9 +146,10 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                     <h1 class="text-blue montserrat-font fs-1 mb-4 ms-5">
                         Comentarios
                     </h1>
-                    <div class="border border-5 border-primary py-3 px-4 mb-3 rounded-pill text-start ms-5">
-                        <input class="bg-transparent border border-0 mondapick-font fs-3 text-blue" type="text" placeholder="Agrega un comentario.">
-                    </div>
+                    <form id="comentarioForm" class="border border-5 border-primary py-3 px-4 mb-3 rounded-pill text-start ms-5" action="libro_giu.php?id=<?php echo htmlspecialchars($giu_id); ?>" method="POST">
+                        <input type="hidden" name="giu_id" value="<?php echo isset($libro['id']) ? htmlspecialchars($libro['id'])  : ''; ?>">
+                        <input id="comentario" name="comentario" class="bg-transparent border border-0 mondapick-font fs-3 text-blue" type="text" placeholder="Agrega un comentario.">
+                    </form>
                     <?php if (!empty($libro["comentarios"])): ?>
                         <?php foreach ($libro["comentarios"] as $comentario): ?>
                             <div class="row align-items-start m-3 mt-4">
@@ -158,5 +173,6 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         </section>
     </div>
     <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/pages/libro_giu.js"></script>
 </body>
 </html>
