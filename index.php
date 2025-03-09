@@ -1,13 +1,15 @@
 <?php
 require "database/conexion.php";
 
-// Verifica que la consulta no esté vacía
+// Verifica que la consulta no esté vacía.
 if (isset($_GET['query']) && !empty($_GET['query'])) {
   $query = $_GET['query'];
   $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : 'titulo';
   if ($tipo == 'autor') {
-    // Búsqueda de Autor
-    $sql = "SELECT autor_id, autor_foto, autor_nombre, autor_descripcion FROM tbl_autores WHERE autor_nombre LIKE ?";
+
+    // Búsqueda de Autor.
+    $sql = "SELECT autor_id, autor_foto, autor_nombre, autor_descripcion FROM tbl_autores 
+    WHERE autor_nombre LIKE ? AND autor_giu = 0";
     $stmt = $mysqli1->prepare($sql);
     $searchTerm = '%' . $query . '%';
     $stmt->bind_param("s", $searchTerm);
@@ -22,38 +24,54 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
         "descripcion" => $fila["autor_descripcion"]
       ];
     }
-    // Redirección a la página de autores
+
+    // Redirección a la página de autores.
     header("Location: pages/autores.php?query=" . urlencode($query) . "&tipo=" . urlencode($tipo));
     exit();
   } else {
-    // Búsqueda de Título
+
+    // Busqueda de Titulo.
     $sql = "SELECT 
-    tbl_libros.libro_id, 
-    tbl_libros.libro_imagen, 
-    tbl_libros.libro_titulo, 
-    tbl_autores.autor_nombre, 
-    tbl_libros.libro_año, 
-    tbl_libros.libro_pensamiento, 
-    tbl_libros.libro_tipo 
-    FROM tbl_libros INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id WHERE libro_titulo LIKE ?";
+      tbl_libros.libro_id, 
+      tbl_libros.libro_imagen, 
+      tbl_libros.libro_titulo, 
+      tbl_autores.autor_nombre, 
+      tbl_libros.libro_pensamiento, 
+      tbl_libros.libro_año,
+      tbl_libros.libro_tipo 
+    FROM tbl_libros
+    INNER JOIN tbl_autores_libros ON tbl_libros.libro_id = tbl_autores_libros.libro_id
+    LEFT JOIN tbl_autores ON tbl_autores_libros.autor_id = tbl_autores.autor_id
+    WHERE tbl_libros.libro_titulo LIKE ? AND tbl_libros.libro_giu = 0";
     $stmt = $mysqli1->prepare($sql);
     $searchTerm = '%' . $query . '%';
     $stmt->bind_param("s", $searchTerm);
     $stmt->execute();
-    $resultado = $stmt->get_result();
+    $resultado = $stmt->get_result(); 
     $libros = [];
     while ($fila = $resultado->fetch_assoc()) {
-      $libros[] = [
-        "id" => $fila["libro_id"],
-        "imagen" => $fila["libro_imagen"],
-        "titulo" => $fila["libro_titulo"],
-        "autor" => $fila["autor_nombre"],
-        "año" => $fila["libro_año"],
-        "pensamiento" => $fila["libro_pensamiento"],
-        "tipo" => $fila["libro_tipo"]
-      ];
+      $libro_id = $fila["libro_id"];
+      if(!isset($libros[$libro_id])) {
+        $libros[$libro_id] = [
+          "id" => $fila["libro_id"],
+          "imagen" => $fila["libro_imagen"],
+          "titulo" => $fila["libro_titulo"],
+          "año" => $fila["libro_año"],
+          "pensamiento" => $fila["libro_pensamiento"],
+          "tipo" => $fila["libro_tipo"],
+          "autores" => []
+        ];
+      }
+      $libros[$libro_id]["autores"][] = $fila["autor_nombre"];
     }
-    // Redirección a la página de libros
+
+    // Convertir array de autores en string separado por comas.
+    foreach ($libros as &$libro) {
+      $libro["autor"] = implode(", ", $libro["autores"]);
+      unset($libro["autores"]);
+    }
+
+    // Redirección a la página de libros.
     header("Location: pages/libros.php?query=" . urlencode($query) . "&tipo=" . urlencode($tipo));
     exit();
   }

@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <section>
                 <article class="row align-items-start m-5">
-                    <div class="col-3 text-center my-3">
+                    <div class="col-4 text-center my-3">
                         <?php if (!empty($libro["imagen"])): ?>
                             <img src="<?php echo htmlspecialchars($libro["imagen"]); ?>" alt="libro" class="libro-imagen text-start">
                         <?php else: ?>
@@ -119,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             Consultar
                         </a>
                     </div>
-                    <div class="col-9">
+                    <div class="col-8">
                         <h1 class="interlineado fw-semibold text-blue montserrat-semibold-font">
                             <?php echo htmlspecialchars($libro["titulo"]); ?>
                         </h1>
@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?php echo htmlspecialchars($libro["tipo"]); ?>
                         </p>
                         <p class="fs-3 fw-light my-4 text-blue montserrat-font">
-                            <?php echo htmlspecialchars($libro["isbn"]); ?>
+                            <?php echo htmlspecialchars($libro["isbn"] ?? "", ENT_QUOTES, 'UTF-8'); ?>
                         </p>
                     </div>
                 </article>

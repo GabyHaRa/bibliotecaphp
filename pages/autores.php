@@ -2,7 +2,8 @@
 require "../database/conexion.php";
 //Lista dinámica de autores.
 $query = isset($_GET['query']) ? $_GET['query'] : '';
-$sql = "SELECT autor_id, autor_foto, autor_nombre, autor_descripcion FROM tbl_autores WHERE autor_nombre LIKE ?";
+$sql = "SELECT autor_id, autor_foto, autor_nombre, autor_descripcion FROM tbl_autores 
+WHERE autor_nombre LIKE ? AND autor_giu = FALSE";
 $stmt = $mysqli1->prepare($sql);
 $searchTerm = '%' . $query . '%';
 $stmt->bind_param("s", $searchTerm);

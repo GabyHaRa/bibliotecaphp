@@ -89,11 +89,10 @@ input:hover{
     height: 175px;
 }
 
-.borde {
-  border-color: #4494eb #4494eb;
-  border-width: 3px 12px;
-  border-style: solid solid;
-  border-radius: 70px 70px 70px 70px;
+/*Foto del investigador*/
+img.rounded-circle.investigador-foto {
+    width: 100px !important;
+    height: 100px !important;
 }
 
 /*Sección lista dinámica de autores*/

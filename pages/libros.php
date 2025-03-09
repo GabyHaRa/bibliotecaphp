@@ -305,7 +305,7 @@ function isSelected($name, $value) {
             <?php if (!empty($libros)): ?>
                 <?php foreach ($libros as $libro): ?>
                     <article class="row align-items-start m-5">
-                        <div class="col-2">
+                        <div class="col-3">
                             <a href="libro.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn">
                                 <?php if (!empty($libro["imagen"])): ?>
                                     <img src="<?php echo htmlspecialchars($libro["imagen"]); ?>" alt="libro" class="libro-imagen text-start">
@@ -314,7 +314,7 @@ function isSelected($name, $value) {
                                 <?php endif; ?>
                             </a>
                         </div>
-                        <div class="col-10 px-1">
+                        <div class="col-9 px-1">
                             <a href="libro.php?id=<?php echo urlencode($libro["id"]); ?>" class="btn text-blue text-start">
                                 <p class="fw-bold fs-2 m-0">
                                     <?php echo htmlspecialchars($libro["titulo"]); ?>

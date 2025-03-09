@@ -2,13 +2,14 @@
 require "../database/conexion.php";
 
 /*Lista dinámica de investigadores*/
-$query = "SELECT investigador_nombre, investigador_descripcion FROM tbl_investigadores ORDER BY investigador_nombre ASC";
+$query = "SELECT investigador_nombre, investigador_descripcion, investigador_foto FROM tbl_investigadores ORDER BY investigador_nombre ASC";
 $resultado = $mysqli1->query($query);
 $investigadores = [];
 while ($fila = $resultado->fetch_assoc()) {
     $investigadores[] = [
         "nombre" => $fila["investigador_nombre"],
-        "descripcion" => $fila["investigador_descripcion"]
+        "descripcion" => $fila["investigador_descripcion"],
+        "foto" =>  $fila["investigador_foto"]
     ];
 }
 ?>
@@ -81,7 +82,11 @@ while ($fila = $resultado->fetch_assoc()) {
                         <div class="<?php echo $index % 2 === 0 ? 'impar' : 'par'; ?> row bg-primary mx-auto mb-5 w-75">
                             <?php if ($index % 2 === 0): ?>
                                 <div class="impar-blue col-auto bg-blue text-center">
-                                    <img class="m-1 mt-5 rounded-circle" src="../img/autor.png" alt="foto">
+                                    <?php if (!empty($investigador["foto"])): ?>
+                                        <img class="m-1 mt-4 rounded-circle investigador-foto" src="<?php echo htmlspecialchars($investigador["foto"]); ?>" alt="foto">
+                                    <?php else: ?>
+                                        <img class="m-1 mt-5 rounded-circle" src="../img/autor.png" alt="foto">
+                                    <?php endif; ?>
                                 </div>
                                 <div class="col m-2 text-start text-blue me-5">
                                     <p class="fs-1 montserrat-semibold-font">
@@ -109,7 +114,11 @@ while ($fila = $resultado->fetch_assoc()) {
                                     </p>
                                 </div>
                                 <div class="par-blue col-auto bg-blue text-center">
-                                    <img class="m-1 mt-5 rounded-circle" src="../img/autor.png" alt="foto">
+                                    <?php if (!empty($investigador["foto"])): ?>
+                                        <img class="m-1 mt-4 rounded-circle investigador-foto" src="<?php echo htmlspecialchars($investigador["foto"]); ?>" alt="foto">
+                                    <?php else: ?>
+                                        <img class="m-1 mt-5 rounded-circle" src="../img/autor.png" alt="foto">
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
                         </div>

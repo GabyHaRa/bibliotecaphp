@@ -77,3 +77,14 @@ img.rounded-circle.autor-foto {
     width: 175px !important;
     height: 175px !important;
 }
+
+/*Imágen del archivo*/
+img.libro-imagen {
+    width: 125px !important;
+    height: 165px !important;
+}
+
+/*Título del archivo*/
+.titulo{
+    text-decoration: none;
+}

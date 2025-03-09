@@ -1,36 +1,51 @@
 <?php
 require "../database/conexion.php";
-//Autor dinámico.
+
+// Autor dinámico.
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $autor_id = $_GET['id'];
-    $query = "SELECT tbl_autores.autor_foto, tbl_autores.autor_nombre, tbl_autores.autor_descripcion, tbl_libros.libro_titulo 
-    FROM tbl_autores LEFT JOIN tbl_libros ON tbl_autores.autor_id = tbl_libros.autor_id WHERE tbl_autores.autor_id = ?";
-    $stmt = $mysqli1->prepare($query);
+
+    // Consulta del autor.
+    $sql = "SELECT
+    tbl_autores.autor_id, 
+    tbl_autores.autor_foto, 
+    tbl_autores.autor_nombre, 
+    tbl_autores.autor_descripcion,
+    tbl_libros.libro_id,
+    tbl_libros.libro_imagen,
+    tbl_libros.libro_titulo
+    FROM tbl_autores 
+    INNER JOIN tbl_autores_libros ON tbl_autores.autor_id = tbl_autores_libros.autor_id
+    LEFT JOIN tbl_libros ON tbl_autores_libros.libro_id = tbl_libros.libro_id
+    WHERE tbl_autores.autor_id = ? AND tbl_autores.autor_giu = 0";
+    $stmt = $mysqli1->prepare($sql);
     $stmt->bind_param("i", $autor_id);
     $stmt->execute();
     $resultado = $stmt->get_result();
-    $autores = [];
+    $autor = [];
     while ($fila = $resultado->fetch_assoc()) {
-        if (empty($autores)) {
-            $autores[] = [
+        if(empty($autor)) {
+            $autor = [
                 "foto" => $fila["autor_foto"],
                 "nombre" => $fila["autor_nombre"],
                 "descripcion" => $fila["autor_descripcion"],
                 "libros" => []
             ];
         }
-        if (!empty($fila["libro_titulo"])) {
-            $autores[0]["libros"][] = $fila["libro_titulo"];
-        }
+
+        //Consulta de los libros.
+        $autor["libros"][] = [
+            "libro_id" => $fila["libro_id"],
+            "libro_imagen" => $fila["libro_imagen"],
+            "libro_titulo" => $fila["libro_titulo"],
+        ];
     }
-    if (empty($autores)) {
+        
+    // Redirección en caso de no encontrar el autor.
+    if(empty($autor)) {
         header("Location: autores.php");
         exit();
-    }
-    $autor = $autores[0];
-} else {
-    header("Location: autores.php");
-    exit();
+    };
 }
 ?>
 
@@ -42,7 +57,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/pages/autor.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($autor['nombre']); ?></title>
+    <title><?php echo isset($autor['nombre']) ? htmlspecialchars($autor['nombre']) : "Autor no encontrado"; ?></title>
 </head>
 
 <body>
@@ -69,6 +84,8 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         <div class="gradient"></div>
 
         <section>
+
+            <!-- Consulta autores. -->
             <article class="row align-items-start m-5 ms-0">
                 <div class="col-auto pt-5">
                     <div class="rounded-4 bg-blue p-4 mt-3 mx-3 ms-5">
@@ -92,20 +109,30 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                     </div>
                 </div>
             </article>
+
+            <!-- Consulta libros-->
             <article class="container-fluid w-100 ms-5">
                 <h1 class="text-blue montserrat-semibold-font fs-2">
                     Publicaciones
                 </h1>
                 <?php if (!empty($autor["libros"])): ?>
                     <div class="row row-cols-3 mx-auto g-5">
-                        <?php foreach ($autor["libros"] as $libros): ?>
+                        <?php foreach ($autor["libros"] as $libro): ?>
                             <div class="col">
                                 <div class="row">
                                     <div class="col-auto">
-                                        <img src="../img/libro_oscuro.png" alt="libro">
+                                        <a href="libro.php?id=<?php echo htmlspecialchars($libro["libro_id"]); ?>">
+                                            <?php if (!empty($libro["libro_imagen"])): ?>
+                                                <img class="libro-imagen" src="<?php echo htmlspecialchars($libro["libro_imagen"]); ?>" alt="libro">
+                                            <?php else: ?>
+                                                <img src="../img/libro_oscuro.png" alt="libro">
+                                            <?php endif; ?>
+                                        </a>
                                     </div>
                                     <div class="col pt-3 ps-4 montserrat-semibold-font text-primary fs-4">
-                                        <?php echo htmlspecialchars($libros); ?>
+                                        <a href="libro.php?id=<?php echo htmlspecialchars($libro["libro_id"]); ?>" class="titulo">
+                                            <?php echo htmlspecialchars($libro["libro_titulo"]); ?>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -114,13 +141,6 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                 <?php else: ?>
                     <p class="ms-5 montserrat-font text-blue fw-light fs-2">Este autor no cuenta con publicaciones.</p>
                 <?php endif; ?>
-            </article>
-        </section>
-    </div>
-    <script src="../js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-
             </article>
         </section>
     </div>

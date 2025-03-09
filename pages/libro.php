@@ -120,8 +120,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="gradient"></div>
 
         <section>
+
+                <!-- Consulta libro. -->
                 <article class="row align-items-start m-5">
-                    <div class="col-3 text-center my-3">
+                    <div class="col-4 text-center my-3">
                         <?php if (!empty($libro["imagen"])): ?>
                             <img src="<?php echo htmlspecialchars($libro["imagen"]); ?>" alt="libro" class="libro-imagen text-start">
                         <?php else: ?>
@@ -131,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             Consultar
                         </a>
                     </div>
-                    <div class="col-9">
+                    <div class="col-8">
                         <h1 class="interlineado ms-2 fw-semibold text-blue montserrat-semibold-font">
                             <?php echo htmlspecialchars($libro["titulo"]); ?>
                         </h1>
@@ -150,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?php echo htmlspecialchars($libro["tipo"]); ?>
                         </p>
                         <p class="fs-3 fw-light my-4 ms-2 text-blue montserrat-font">
-                            <?php echo htmlspecialchars($libro["isbn"]); ?>
+                            <?php echo htmlspecialchars($libro["isbn"] ?? "", ENT_QUOTES, 'UTF-8'); ?>
                         </p>
                     </div>
                 </article>
@@ -163,6 +165,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </p>
                 </article>
                 <article class="texto m-5">
+                    
+                    <!-- Publicación comentarios. -->
                     <h1 class="text-blue montserrat-font fs-1 mb-4 ms-5">
                         Comentarios
                     </h1>
@@ -170,6 +174,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="hidden" name="libro_id" value="<?php echo isset($libro['id']) ? htmlspecialchars($libro['id'])  : ''; ?>">
                         <input id="comentario" name="comentario" class="bg-transparent border border-0 mondapick-font fs-3 text-blue" type="text" placeholder="Agrega un comentario.">
                     </form>
+
+                    <!-- Consulta comentarios. -->
                     <?php if (!empty($libro["comentarios"])): ?>
                         <?php foreach ($libro["comentarios"] as $comentario): ?>
                             <div class="row align-items-start m-3 mt-4">
