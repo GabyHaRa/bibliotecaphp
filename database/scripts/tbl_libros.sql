@@ -1,245 +1,46 @@
-DROP TABLE IF EXISTS `tbl_autores`;
-CREATE TABLE `tbl_autores` (
-  `autor_id` int unsigned NOT NULL AUTO_INCREMENT,
-  `autor_nombre` varchar(500) COLLATE utf8mb4_spanish_ci NOT NULL,
-  `autor_descripcion` text COLLATE utf8mb4_spanish_ci,
-  `autor_creacion` date DEFAULT NULL,
-  `autor_modificacion` date DEFAULT NULL,
-  PRIMARY KEY (`autor_id`),
-  KEY `idx_autor` (`autor_nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-
-LOCK TABLES `tbl_autores` WRITE;
-INSERT INTO `tbl_autores` 
-VALUES 
-(
-    1,
-    'Shaylee Wyman',
-    'Ea sapiente voluptates dolor sunt natus debitis molestias. Voluptas voluptas molestiae hic sunt sunt pariatur doloribus. A omnis quam facere qui et eum nisi. Facere aliquid numquam consequuntur qui nostrum eaque nulla.',
-    NULL,
-    NULL
-),
-(
-    2,
-    'Josie Considine',
-    NULL,
-    NULL,
-    NULL
-),
-(
-    3,
-    'Jettie White',
-    'Repellat expedita enim laboriosam non aut facere. Harum cum velit eligendi voluptatem culpa fugit. Doloribus minus fugit enim ea. Hic doloribus quas itaque ducimus dignissimos praesentium accusamus.',
-    NULL,
-    NULL
-    ),
-    (
-        4,
-        'Ms. Daniela Romaguera',
-        'Fugit ullam ipsum natus ad. Omnis facilis rerum est possimus et aut. Expedita officiis illo facere eaque.',
-        NULL,
-        NULL
-    ),
-    (
-        5,
-        'Jazlyn Mertz',
-        NULL,
-        NULL,
-        NULL
-    ),
-    (
-        6,
-        'Walton Waelchi V',
-        NULL,
-        NULL,
-        NULL
-    ),
-    (
-        7,
-        'Nikita O\ Keefe',
-        NULL,
-        NULL,
-        NULL
-    ),
-    (
-        8,
-        'Sherwood Friesen',
-        'Natus nesciunt et optio ab et. Unde est vero minus. Ut quia distinctio itaque consequatur corporis modi. Tenetur rerum qui minus repellat dolorem aut perferendis at.',
-        NULL,
-        NULL
-    ),
-    (
-        9,
-        'Mrs. Amiya Stiedemann',
-        NULL,
-        NULL,
-        NULL
-    ),
-    (
-        10,
-        'Maybell Towne Jr.',
-        NULL,
-        NULL,
-        NULL
-    );
-UNLOCK TABLES;
-
-DROP TABLE IF EXISTS `tbl_comentarios`;
-CREATE TABLE `tbl_comentarios` (
-  `comentario_id` int unsigned NOT NULL AUTO_INCREMENT,
-  `comentario_texto` text COLLATE utf8mb4_spanish_ci NOT NULL,
-  `libro_id` int unsigned NOT NULL,
-  `comentario_creacion` date DEFAULT NULL,
-  `comentario_modificacion` date DEFAULT NULL,
-  PRIMARY KEY (`comentario_id`),
-  KEY `id_libro` (`libro_id`),
-  CONSTRAINT `tbl_comentarios_ibfk_1` FOREIGN KEY (`libro_id`) REFERENCES `tbl_libros` (`libro_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-
-LOCK TABLES `tbl_comentarios` WRITE;
-UNLOCK TABLES;
+/*CREATE*/
 
 DROP TABLE IF EXISTS `tbl_libros`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tbl_libros` (
-  `libro_id` int unsigned NOT NULL AUTO_INCREMENT,
-  `autor_id` int unsigned NOT NULL,
-  `libro_titulo` varchar(500) COLLATE utf8mb4_spanish_ci DEFAULT 'Sin título.',
-  `libro_año` year DEFAULT NULL,
-  `libro_idioma` varchar(23) COLLATE utf8mb4_spanish_ci DEFAULT 'Español',
-  `libro_tipo` varchar(30) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `libro_pensamiento` enum('Pensamiento bioético','Pensamiento humanístico español','Pensamiento humanístico inglés','Pensamiento matemático','Pensamiento social','Pensamiento tecnológico') COLLATE utf8mb4_spanish_ci NOT NULL,
-  `libro_isbn` mediumtext COLLATE utf8mb4_spanish_ci,
-  `libro_resumen` mediumtext COLLATE utf8mb4_spanish_ci,
-  `libro_enlace` mediumtext COLLATE utf8mb4_spanish_ci NOT NULL,
+  `libro_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `libro_titulo` varchar(500) NOT NULL DEFAULT 'Sin título.',
+  `libro_año` smallint(4) DEFAULT NULL,
+  `libro_idioma` varchar(23) NOT NULL DEFAULT 'Español',
+  `libro_tipo` varchar(30) NOT NULL DEFAULT 'Libro',
+  `libro_pensamiento` enum('Bioético','Español','Inglés','Matemático','Social','Tecnológico') DEFAULT NULL,
+  `libro_isbn` tinytext DEFAULT NULL,
+  `libro_resumen` text DEFAULT NULL,
+  `libro_enlace` mediumtext NOT NULL,
   `libro_creacion` date DEFAULT NULL,
   `libro_modificacion` date DEFAULT NULL,
+  `libro_pais` varchar(50) NOT NULL DEFAULT 'Colombia',
+  `libro_imagen` mediumtext DEFAULT NULL,
+  `libro_giu` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`libro_id`),
-  KEY `idx_libro` (`libro_titulo`),
-  KEY `id_autor` (`autor_id`),
-  CONSTRAINT `tbl_libros_ibfk_1` FOREIGN KEY (`autor_id`) REFERENCES `tbl_autores` (`autor_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+  KEY `idx_libro` (`libro_titulo`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
+/*INSERT*/
 LOCK TABLES `tbl_libros` WRITE;
-INSERT INTO `tbl_libros` VALUES 
-(
-    1,
-    1,
-    'Numquam esse id sit et ratione possimus fugiat nesciunt.',
-    2025,
-    'Español',
-    'Ensayo',
-    'Pensamiento humanístico inglés',
-    NULL,
-    'Voluptatibus impedit maiores ut repudiandae perspiciatis. Perspiciatis minima similique et doloremque nesciunt. Consequatur numquam repellendus necessitatibus.','http://dibbert.com/',NULL,NULL),(2,2,'Atque iste voluptates facilis nemo temporibus.',1975,'Inglés','Tesina','Pensamiento matemático',NULL,'Optio expedita doloremque laudantium eligendi incidunt. Optio fuga ea qui officiis dolor. Sunt quisquam et cupiditate quis. Nihil voluptatem eum aut qui corrupti.','https://www.kuphal.com/eos-iure-id-similique-libero',NULL,NULL),(3,3,'Sin título.',1971,'Español','Libro','Pensamiento bioético',NULL,'Odio et fuga natus sit voluptatem. Dicta soluta eius dolorem eum distinctio accusantium. Quisquam ut molestiae consectetur expedita sint.','http://www.weimann.info/numquam-beatae-dolor-quia-expedita-eius',NULL,NULL),(4,4,'Eaque molestiae officiis magnam ut temporibus impedit tenetur.',1998,'Español',NULL,'Pensamiento bioético','9790831354779','Officiis vel soluta esse et totam vel. Autem rem voluptatem ut sed consequatur. Aut quia aut et debitis eaque minima eveniet. Cum quam quo consequatur.','http://www.hahn.info/numquam-et-commodi-blanditiis-reprehenderit-a-et',NULL,NULL),(5,5,'Explicabo est optio exercitationem inventore.',1980,'Español',NULL,'Pensamiento bioético',NULL,'Dolorem quaerat iusto consequatur labore voluptate ipsam. Et vel et repellendus ipsum accusamus doloremque voluptatum. Quibusdam aspernatur repellat quam aliquam molestiae. Quisquam aut ipsum velit harum illo totam asperiores.','https://www.predovic.com/ducimus-fugit-magni-quos-nulla-ea-quod',NULL,NULL),(6,6,'Sin título.',2025,'Inglés',NULL,'Pensamiento tecnológico','9796462366310','Voluptatem inventore et exercitationem temporibus enim aut. Non corporis architecto quo corrupti saepe sit est. Quas vero dolorem minus non eligendi.','http://lockman.com/',NULL,NULL),(7,7,'Dolores unde consequatur ea omnis.',2013,'Español','Libro','Pensamiento humanístico inglés',NULL,'Corporis quos necessitatibus dolore voluptate distinctio et recusandae nemo. Laboriosam autem qui alias rerum consequatur quia voluptatum. Repellendus modi debitis animi et.','http://connelly.org/ut-itaque-asperiores-quod-vel-totam',NULL,NULL),(8,8,'Id illo molestias commodi voluptatem veritatis.',1989,'Español',NULL,'Pensamiento humanístico inglés',NULL,'Incidunt accusamus voluptatem sint id asperiores iste ratione laborum. Quis excepturi saepe id accusamus.','http://denesik.org/',NULL,NULL),(9,9,'Sin título.',1996,'Español','Tesina','Pensamiento tecnológico','9784633543554','Aut autem distinctio eos blanditiis molestiae. Voluptatem enim sint eos illum a veniam.','http://mraz.com/et-nulla-similique-similique-sunt-ut-vero',NULL,NULL),(10,10,'Quis laboriosam ut consectetur sint voluptatum autem.',2025,'Francés',NULL,'Pensamiento humanístico inglés','9789519760247','Maiores minima porro tenetur eaque quia accusantium. Dicta vitae quia maxime quae reiciendis temporibus ea. Libero molestias placeat ad magnam autem recusandae possimus. Eum aut molestiae esse nam qui magnam qui.','http://www.torp.com/',NULL,NULL);
+/*!40000 ALTER TABLE `tbl_libros` DISABLE KEYS */;
+INSERT INTO `tbl_libros` VALUES (1,'Numquam esse id sit et ratione possimus fugiat nesciunt.',2025,'Español','Ensayo','Inglés',NULL,'Voluptatibus impedit maiores ut repudiandae perspiciatis. Perspiciatis minima similique et doloremque nesciunt. Consequatur numquam repellendus necessitatibus.','http://dibbert.com/',NULL,NULL,'Colombia',NULL,0),(2,'Atque iste voluptates facilis nemo temporibus.',1975,'Inglés','Tesina','Matemático',NULL,'Optio expedita doloremque laudantium eligendi incidunt. Optio fuga ea qui officiis dolor. Sunt quisquam et cupiditate quis. Nihil voluptatem eum aut qui corrupti.','https://www.kuphal.com/eos-iure-id-similique-libero',NULL,NULL,'Rusia',NULL,0),(3,'Sin título.',1971,'Español','Libro','Bioético',NULL,'Odio et fuga natus sit voluptatem. Dicta soluta eius dolorem eum distinctio accusantium. Quisquam ut molestiae consectetur expedita sint.','http://www.weimann.info/numquam-beatae-dolor-quia-expedita-eius',NULL,NULL,'Alemania',NULL,0),(4,'Eaque molestiae officiis magnam ut temporibus impedit tenetur.',1998,'Español','Libro','Bioético','9790831354779','Officiis vel soluta esse et totam vel. Autem rem voluptatem ut sed consequatur. Aut quia aut et debitis eaque minima eveniet. Cum quam quo consequatur.','http://www.hahn.info/numquam-et-commodi-blanditiis-reprehenderit-a-et',NULL,NULL,'Francia',NULL,0),(5,'Explicabo est optio exercitationem inventore.',1980,'Español','Libro','Bioético',NULL,'Dolorem quaerat iusto consequatur labore voluptate ipsam. Et vel et repellendus ipsum accusamus doloremque voluptatum. Quibusdam aspernatur repellat quam aliquam molestiae. Quisquam aut ipsum velit harum illo totam asperiores.','https://www.predovic.com/ducimus-fugit-magni-quos-nulla-ea-quod',NULL,NULL,'Estados Unidos',NULL,0),(6,'Sin título.',2025,'Inglés','Libro','Tecnológico','9796462366310','Voluptatem inventore et exercitationem temporibus enim aut. Non corporis architecto quo corrupti saepe sit est. Quas vero dolorem minus non eligendi.','http://lockman.com/',NULL,NULL,'Brasil',NULL,0),(7,'Dolores unde consequatur ea omnis.',2013,'Español','Libro','Inglés',NULL,'Corporis quos necessitatibus dolore voluptate distinctio et recusandae nemo. Laboriosam autem qui alias rerum consequatur quia voluptatum. Repellendus modi debitis animi et.','http://connelly.org/ut-itaque-asperiores-quod-vel-totam',NULL,NULL,'Argentina',NULL,0),(8,'Id illo molestias commodi voluptatem veritatis.',1989,'Español','Libro','Inglés',NULL,'Incidunt accusamus voluptatem sint id asperiores iste ratione laborum. Quis excepturi saepe id accusamus.','http://denesik.org/',NULL,NULL,'Argentina',NULL,0),(9,'Sin título.',1996,'Español','Tesina','Tecnológico','9784633543554','Aut autem distinctio eos blanditiis molestiae. Voluptatem enim sint eos illum a veniam.','http://mraz.com/et-nulla-similique-similique-sunt-ut-vero',NULL,NULL,'Venezuela',NULL,0),(10,'Quis laboriosam ut consectetur sint voluptatum autem.',2025,'Francés','Libro','Inglés','9789519760247','Maiores minima porro tenetur eaque quia accusantium. Dicta vitae quia maxime quae reiciendis temporibus ea. Libero molestias placeat ad magnam autem recusandae possimus. Eum aut molestiae esse nam qui magnam qui.','http://www.torp.com/',NULL,NULL,'Bolivia',NULL,0),(11,'Lorem ipsum dolor sit amet.',1800,'Español','Libro','Bioético',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.','https://es.Lorem-ipsum-dolor-sit-amet.co',NULL,NULL,'Colombia','https://img.freepik.com/foto-gratis/portada-libro-frontal-dura-color-rojo_1101-833.jpg?t=st=1741305695~exp=1741309295~hmac=77fa65a70e4be39beb89f5e48a05bc7f4efa7e401d2f78bab6699d933fb6e39d&w=740',0),(12,'Cras sed placerat ex. Pellentesque ac.',1801,'Español','Libro','Bioético',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.','https://es.Lorem-ipsum-dolor-sit-amet.co',NULL,NULL,'Colombia','https://img.freepik.com/foto-gratis/arreglo-creativo-dia-mundial-libro_23-2148883749.jpg?t=st=1741311511~exp=1741315111~hmac=dab10d7e6f67f17ad0e3200d56ec72a90a42984ca6d3868231257c8af1f69cc4&w=740',0),(13,'Cras sed placerat ex.',1802,'Inglés','Libro','Tecnológico',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.','https://es.Lorem-ipsum-dolor-sit-amet.co',NULL,NULL,'Colombia','https://img.freepik.com/foto-gratis/concepto-redes-sociales-telefono-inteligente_23-2149834252.jpg?t=st=1741311755~exp=1741315355~hmac=c535a410fe60d54c7dc0302abdda3a6ea9da794e9679b4f86479c38b08f5700f&w=1380',0),(14,'Vivamus dignissim mauris eget eleifend dapibus.',1900,'Inglés','Libro','Social',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit.','htttps://vivamus-dignissim-mauris-eget-eleifend-dapibus',NULL,NULL,'Alemania','https://img.freepik.com/foto-gratis/hermoso-girasol-gotas-agua_23-2150806368.jpg?t=st=1741313726~exp=1741317326~hmac=231ac80ab0dedbcc41407fcc90c868ed9cb7e374084d4289e41d68539521ecb3&w=740',0),(15,'Lorem ipsum dolor sit.',1901,'Húngaro','Tesis','Bioético',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.','https://es.Lorem-ipsum-dolor-sit.com',NULL,NULL,'Bélgica','',0),(16,'Cras sed placerat ex. Pellentesque.',1802,'Español','Tesina','Bioético',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.','https://pellentesque.co',NULL,NULL,'Colombia','https://img.freepik.com/foto-gratis/vista-frontal-libros-apilados-gorra-graduacion-diploma-dia-educacion_23-2149241011.jpg?t=st=1741314216~exp=1741317816~hmac=4a8061aa9603c7392ded3f017aae5f438adf4ca8c54cb6e0c96080a80a5916ef&w=740',0),(17,'Cras sed placerat.',1803,'Indonés','Artículo de opinión','Tecnológico',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequa.','https://cras-sed-placerat.es',NULL,NULL,'España','https://img.freepik.com/fotos-premium/retrato-mujer-india-templo_53876-71699.jpg?w=740',0),(18,'Vivamus dignissim mauris eget eleifend.',1901,'Inglés','Artículo de opinión','Social',NULL,'Lorem ipsum dolor sit amet.','htttps://en.vivamus.com',NULL,NULL,'Alemania','https://img.freepik.com/foto-gratis/primer-plano-ejecutivo-cafe-periodico_1098-2762.jpg?t=st=1741314909~exp=1741318509~hmac=d9830c8ef93ba2b92d738e86caf7dddbba3d33543c4675dda3a828ec22adaa40&w=1060',0),(19,'Sin título.',2025,'Español','Libro',NULL,NULL,NULL,'https://www.giu.php',NULL,NULL,'Colombia',NULL,1),(20,'Sin título.',2025,'Español','Libro','Matemático',NULL,NULL,'https://www.matem?tico.com',NULL,NULL,'Colombia',NULL,0),(21,'Nam non quam quis eros dignissim finibus vel sodales justo.',2004,'','Tesina',NULL,NULL,'Nam non quam quis eros dignissim finibus vel sodales justo. Nulla at efficitur neque. Curabitur ullamcorper augue eget elit laoreet mollis. Etiam nec aliquam nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam sed pulvinar leo, ornare bibendum turpis. Aliquam vitae ipsum varius, rhoncus est eget, vestibulum purus. Quisque gravida ante ultricies, luctus mauris nec, hendrerit neque. Aliquam augue justo, varius vel lectus a, commodo mollis justo. Praesent at purus at elit euismod bibendum. ','https://www.nam-non-quam.com',NULL,NULL,'Colombia',NULL,1),(24,'Nullam scelerisque ex enim.',2002,'','Tesis',NULL,NULL,'','https://www.nullam.com',NULL,NULL,'Colombia',NULL,1);
+/*!40000 ALTER TABLE `tbl_libros` ENABLE KEYS */;
 UNLOCK TABLES;
-ALTER DATABASE `biblioteca` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `before_insert_libros` BEFORE INSERT ON `tbl_libros` FOR EACH ROW SET NEW.libro_año = IFNULL(NEW.libro_año, YEAR(CURDATE())) */;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER before_insert_tbl_libros 
+BEFORE INSERT ON tbl_libros 
+FOR EACH ROW 
+BEGIN
+    SET NEW.libro_año = IFNULL(NEW.libro_año, YEAR(CURDATE()));
+END */;;
 DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `biblioteca` CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci ;
-
---
--- Table structure for table `tbl_libros_giu`
---
-
-DROP TABLE IF EXISTS `tbl_libros_giu`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tbl_libros_giu` (
-  `giu_id` int unsigned NOT NULL AUTO_INCREMENT,
-  `autor_id` int unsigned NOT NULL,
-  `giu_año` year DEFAULT NULL,
-  `giu_tipo` varchar(30) COLLATE utf8mb4_spanish_ci DEFAULT 'Libro',
-  `giu_isbn` text COLLATE utf8mb4_spanish_ci,
-  `giu_resumen` text COLLATE utf8mb4_spanish_ci,
-  `giu_enlace` text COLLATE utf8mb4_spanish_ci NOT NULL,
-  `giu_titulo` varchar(500) COLLATE utf8mb4_spanish_ci DEFAULT 'Sin título.',
-  `giu_creacion` date DEFAULT NULL,
-  `giu_modificacion` date DEFAULT NULL,
-  PRIMARY KEY (`giu_id`),
-  KEY `idx_giu` (`giu_titulo`),
-  KEY `id_autor` (`autor_id`),
-  CONSTRAINT `tbl_libros_giu_ibfk_1` FOREIGN KEY (`autor_id`) REFERENCES `tbl_autores` (`autor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tbl_libros_giu`
---
-
-LOCK TABLES `tbl_libros_giu` WRITE;
-/*!40000 ALTER TABLE `tbl_libros_giu` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tbl_libros_giu` ENABLE KEYS */;
-UNLOCK TABLES;
-ALTER DATABASE `biblioteca` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `before_insert_giu` BEFORE INSERT ON `tbl_libros_giu` FOR EACH ROW SET NEW.giu_año = IFNULL(NEW.giu_año, YEAR(CURDATE())) */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `biblioteca` CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci ;
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_spanish_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_spanish_ci NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_spanish_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2025-02-02 15:20:52
-
-INSERT INTO tbl_libros 
