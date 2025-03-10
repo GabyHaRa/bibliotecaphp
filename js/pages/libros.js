@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const filtrosForm = document.getElementById('filtros-form');
     const inputs = Array.from(document.getElementsByClassName('input'));
-    const tipo = document.getElementById('tipo');
+    const tipo = document.getElementById('genero');
     const pensamiento = document.getElementById('pensamiento');
     const pais = document.getElementById('pais');
     const ano = document.getElementById('ano');

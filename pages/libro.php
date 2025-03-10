@@ -1,11 +1,12 @@
 <?php
 require "../database/conexion.php";
+
 // Libro dinámico.
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $libro_id = $_GET['id'];
 
     // Consulta de libro y autor.
-    $query = "SELECT 
+    $sql = "SELECT 
         tbl_libros.libro_titulo,
         tbl_libros.libro_imagen,
         tbl_libros.libro_año, 
@@ -17,46 +18,71 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         tbl_autores.autor_id, 
         tbl_autores.autor_nombre
     FROM tbl_libros 
-    INNER JOIN tbl_autores ON tbl_libros.autor_id = tbl_autores.autor_id 
+    INNER JOIN tbl_autores_libros ON tbl_libros.libro_id = tbl_autores_libros.libro_id
+    LEFT JOIN tbl_autores ON tbl_autores_libros.autor_id = tbl_autores.autor_id
     WHERE tbl_libros.libro_id = ?";
-    $stmt = $mysqli1->prepare($query);
-    $stmt->bind_param("i", $libro_id);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-    if ($fila = $resultado->fetch_assoc()) {
+    if ($stmt = $mysqli1->prepare($sql)) {
+        $stmt->bind_param("i", $libro_id);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $libro = [];
+        while ($fila = $resultado->fetch_assoc()) {
+            if(empty($libro)) {
 
-        // Asignación de datos.
-        $libro = [
-            "id" => $libro_id,
-            "imagen" => $fila["libro_imagen"],
-            "titulo" => $fila["libro_titulo"],
-            "año" => $fila["libro_año"],
-            "pensamiento" => $fila["libro_pensamiento"],
-            "tipo" => $fila["libro_tipo"],
-            "isbn" => $fila["libro_isbn"],
-            "enlace" => $fila["libro_enlace"],
-            "resumen" => $fila["libro_resumen"],
-            "autor_id" => $fila["autor_id"],
-            "autor" => $fila["autor_nombre"],
-            "comentarios" => []
-        ];
-    } else {
-        header("Location: libros.php");
-        exit();
+                // Asignación de datos.
+                $libro = [
+                    "id" => $libro_id,
+                    "imagen" => $fila["libro_imagen"],
+                    "titulo" => $fila["libro_titulo"],
+                    "año" => $fila["libro_año"],
+                    "pensamiento" => $fila["libro_pensamiento"],
+                    "tipo" => $fila["libro_tipo"],
+                    "isbn" => $fila["libro_isbn"],
+                    "enlace" => $fila["libro_enlace"],
+                    "resumen" => $fila["libro_resumen"],
+                    "autores" => [],
+                ];
+            }
+
+            // Consulta de los autores.
+            $autores_id = isset($libro["autores"]) ? array_column($libro["autores"], "autor_id") : [];
+            if (!in_array($fila["autor_id"], $autores_id) && $fila["autor_id"] !== null) {
+                $libro["autores"][] = [
+                    "autor_id" => $fila["autor_id"],
+                    "autor_nombre" => $fila["autor_nombre"]
+                ];
+            }
+        } 
+
+        // Cerrar statment para limpiar memoria.
+        $stmt->close();
+
+        // Redirección en caso de no encontrar el libro.
+        if(empty($libro)) {
+            header("Location: libros.php");
+            exit();
+        };
     }
 
     // Consulta de comentarios.
-    $query = "SELECT comentario_texto FROM tbl_comentarios WHERE libro_id = ?";
-    $stmt = $mysqli1->prepare($query);
-    $stmt->bind_param("i", $libro_id);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-    while ($fila = $resultado->fetch_assoc()) {
-        $libro["comentarios"][] = $fila["comentario_texto"];
+    $sql = "SELECT tbl_comentarios.comentario_texto FROM tbl_comentarios WHERE tbl_comentarios.libro_id = ?";
+    if ($stmt = $mysqli1->prepare($sql)) {
+        $stmt->bind_param("i", $libro_id);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $comentarios = [];
+        while ($fila = $resultado->fetch_assoc()) {
+            $comentarios[] = $fila["comentario_texto"];
+        }
+        // Cerrar statment para limpiar memoria.
+        $stmt->close();
+
+        // Redirección en caso de no encontrar el comentario.
+        if(empty($comentarios)) {
+            header("Location: libros.php");
+            exit();
+        };
     }
-} else {
-    header("Location: libros.php");
-    exit();
 }
 
 // Publicar comentario.
@@ -68,16 +94,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Insertar el comentario en la base de datos
         $query = "INSERT INTO tbl_comentarios (libro_id, comentario_texto) VALUES (?, ?)";
-        $stmt = $mysqli1->prepare($query);
-        $stmt->bind_param("is", $libro_id, $comentario);
+        if($stmt = $mysqli1->prepare($query)) {
+            $stmt->bind_param("is", $libro_id, $comentario);
 
-        if ($stmt->execute()) {
+            if ($stmt->execute()) {
 
-            // Redirección de vuelta al libro para que no se envíe doble vez.
-            header("Location: libro.php?id=" . $libro_id); 
-            exit();
+                // Cerrar statment para limpiar memoria.
+                $stmt->close();
+
+                // Redirección de vuelta al libro para que no se envíe doble vez.
+                header("Location: libro.php?id=" . $libro_id); 
+                exit();
+            } else {
+                echo "Error al guardar el comentario.";
+            }
         } else {
-            echo "Error al guardar el comentario.";
+            echo "Error al preparar la consulta SQL.";
         }
     } else {
         echo "Comentario vacío o ID de libro inválido.";
@@ -134,24 +166,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </a>
                     </div>
                     <div class="col-8">
-                        <h1 class="interlineado ms-2 fw-semibold text-blue montserrat-semibold-font">
+                        <h1 class="interlineado ms-2 text-blue montserrat-semibold-font">
                             <?php echo htmlspecialchars($libro["titulo"]); ?>
                         </h1>
-                        <a href="autor.php?id=<?php echo htmlspecialchars($libro["autor_id"]); ?>" class="btn">
-                            <p class="fs-1 fw-light my-3 text-blue montserrat-font">
-                                <?php echo htmlspecialchars($libro["autor"]); ?>
-                            </p>
-                        </a>
-                        <p class="fs-1 fw-light mb-4 ms-2 text-blue montserrat-font">
+                        <?php if (!empty($libro["autores"])): ?>
+                            <?php foreach($libro["autores"] as $autor): ?>
+                                <a href="autor.php?id=<?php echo htmlspecialchars($autor["autor_id"]); ?>" class="btn">
+                                    <p class="fs-2 fw-light my-3 text-blue montserrat-font">
+                                        <?php echo htmlspecialchars($autor["autor_nombre"]); ?>
+                                    </p>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                        <p class="fs-2 fw-light mb-4 ms-2 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["año"]); ?>
                         </p>
-                        <p class="fs-1 fw-light my-4 ms-2 text-blue montserrat-font">
+                        <p class="fs-2 fw-light my-4 ms-2 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["pensamiento"]); ?>
                         </p>
-                        <p class="fs-1 fw-light my-4 ms-2 text-blue montserrat-font">
+                        <p class="fs-2 fw-light my-4 ms-2 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["tipo"]); ?>
                         </p>
-                        <p class="fs-3 fw-light my-4 ms-2 text-blue montserrat-font">
+                        <p class="fs-4 fw-light my-4 ms-2 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["isbn"] ?? "", ENT_QUOTES, 'UTF-8'); ?>
                         </p>
                     </div>
@@ -176,8 +212,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </form>
 
                     <!-- Consulta comentarios. -->
-                    <?php if (!empty($libro["comentarios"])): ?>
-                        <?php foreach ($libro["comentarios"] as $comentario): ?>
+                    <?php if (!empty($comentarios)): ?>
+                        <?php foreach ($comentarios as $comentario): ?>
                             <div class="row align-items-start m-3 mt-4">
                                 <div class="col-auto rounded-circle">
                                     <img class="mt-4 ms-3" src="../img/perfil.png" alt="foto de perfil">
