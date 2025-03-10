@@ -1,15 +1,19 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_display_errors', 1);
+error_reporting(E_ALL);
 require "../database/conexion.php";
 
-/*Lista dinámica de investigadores*/
-$query = "SELECT investigador_nombre, investigador_descripcion, investigador_foto FROM tbl_investigadores ORDER BY investigador_nombre ASC";
+// Lista dinámica de investigadores.
+$query = "SELECT autor_nombre, autor_descripcion, autor_foto FROM tbl_autores WHERE autor_giu = 1 
+ORDER BY autor_nombre ASC";
 $resultado = $mysqli1->query($query);
 $investigadores = [];
 while ($fila = $resultado->fetch_assoc()) {
     $investigadores[] = [
-        "nombre" => $fila["investigador_nombre"],
-        "descripcion" => $fila["investigador_descripcion"],
-        "foto" =>  $fila["investigador_foto"]
+        "nombre" => $fila["autor_nombre"],
+        "descripcion" => $fila["autor_descripcion"],
+        "foto" =>  $fila["autor_foto"]
     ];
 }
 ?>

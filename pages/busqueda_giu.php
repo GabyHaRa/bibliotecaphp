@@ -2,71 +2,70 @@
 require "../database/conexion.php";
 
 // Lista dinámica de géneros
-$query = "SELECT giu_tipo FROM tbl_libros_giu WHERE giu_tipo IS NOT NULL GROUP BY giu_tipo ORDER BY giu_tipo ASC";
+$query = "SELECT libro_tipo FROM tbl_libros WHERE libro_giu = 1 GROUP BY libro_tipo ORDER BY libro_tipo ASC";
 $resultado = $mysqli1->query($query);
-$tipos = [];
+$generos = [];
 while ($fila = $resultado->fetch_assoc()) {
-    $tipos[] = $fila["giu_tipo"];
+    $generos[] = $fila["libro_tipo"];
 }
 
 // Lista dinámica de años
-$query = "SELECT giu_año FROM tbl_libros_giu GROUP BY giu_año ORDER BY giu_año ASC";
+$query = "SELECT libro_año FROM tbl_libros WHERE libro_giu = 1 GROUP BY libro_año ORDER BY libro_año ASC";
 $resultado = $mysqli1->query($query);
 $anos = [];
 while ($fila = $resultado->fetch_assoc()) {
-    $anos[] = $fila["giu_año"];
+    $anos[] = $fila["libro_año"];
 }
 
 // Lista dinámica de libros
 $query = isset($_GET["query"]) ? $_GET["query"] : "";
-$tipo = isset($_GET["tipo"]) ? $_GET["tipo"] : [];
+$genero = isset($_GET["genero"]) ? $_GET["genero"] : [];
 $ano = isset($_GET["ano"]) ? $_GET["ano"] : [];
 $orden = isset($_GET["orden"]) ? $_GET["orden"] : "relevancia";
-$sql = "SELECT 
-tbl_libros_giu.giu_id, 
-tbl_libros_giu.giu_imagen, 
-tbl_libros_giu.giu_titulo, 
-tbl_investigadores.investigador_nombre, 
-tbl_libros_giu.giu_año, 
-tbl_libros_giu.giu_tipo 
-FROM tbl_libros_giu 
-INNER JOIN tbl_investigadores ON tbl_libros_giu.autor_id = tbl_investigadores.investigador_id 
-WHERE tbl_libros_giu.giu_titulo LIKE ?";
+$sql = "SELECT libro_id, libro_imagen, libro_titulo, libro_año, libro_tipo FROM tbl_libros 
+WHERE libro_titulo LIKE ? AND libro_giu = 1";
 $params = ["%$query%"];
 $types = "s";
-if (!empty($tipo)) {
-    $sql .= " AND tbl_libros_giu.giu_tipo IN (". str_repeat("?,", count($tipo) - 1) . "?)";
-    $params = array_merge($params, $tipo);
-    $types .= str_repeat("s", count($tipo));
+if (!empty($genero)) {
+    $sql .= " AND libro_tipo IN (". str_repeat("?,", count($genero) - 1) . "?)";
+    $params = array_merge($params, $genero);
+    $types .= str_repeat("s", count($genero));
 }
 if (!empty($ano)) {
-    $sql .= " AND tbl_libros_giu.giu_año IN (". str_repeat("?,", count($ano) - 1) . "?)";
+    $sql .= " AND libro_año IN (". str_repeat("?,", count($ano) - 1) . "?)";
     $params = array_merge($params, $ano);
     $types .= str_repeat("s", count($ano));
 }
 // Ordenar
 if ($orden == "ano_asc") {
-    $sql .= " ORDER BY tbl_libros_giu.giu_año ASC";
+    $sql .= " ORDER BY libro_año ASC";
 } elseif ($orden == "ano_desc") {
-    $sql .= " ORDER BY tbl_libros_giu.giu_año DESC";
+    $sql .= " ORDER BY libro_año DESC";
 } else {
-    $sql .= " ORDER BY tbl_libros_giu.giu_titulo ASC";
+    $sql .= " ORDER BY libro_titulo ASC";
 }
-$stmt = $mysqli1->prepare($sql);
-$searchTerm = '%' . $query . '%';
-$stmt->bind_param($types, ...$params);
-$stmt->execute();
-$resultado = $stmt->get_result();
-$libros = [];
-while ($fila = $resultado->fetch_assoc()) {
-    $libros[] = [
-        "id" => $fila["giu_id"],
-        "imagen" => $fila["giu_imagen"],
-        "titulo" => $fila["giu_titulo"],
-        "autor" => $fila["investigador_nombre"],
-        "año" => $fila["giu_año"],
-        "tipo" => $fila["giu_tipo"]
-    ];
+if($stmt = $mysqli1->prepare($sql)) {
+    $searchTerm = '%' . $query . '%';
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    $libros = [];
+    while ($fila = $resultado->fetch_assoc()) {
+
+        //Asignación de datos.
+        $libro_id = $fila["libro_id"];
+        if(!isset($libros[$libro_id])) {
+            $libros[$libro_id] = [
+                "id" => $fila["libro_id"],
+                "imagen" => $fila["libro_imagen"],
+                "titulo" => $fila["libro_titulo"],
+                "año" => $fila["libro_año"],
+                "genero" => $fila["libro_tipo"],
+            ];
+        }
+    }
+    //Cerrar statment para limpiar memoria.
+    $stmt->close();
 }
 
 // Mantener los filtros seleccionados
@@ -113,15 +112,15 @@ function isSelected($name, $value) {
                             <ul id="menu-padre" class="dropdown-menu dropdown-menu-center bg-transparent border-0 mt-5">
                                 <li class="dropdown-item hover border border-5 bg-light border-primary rounded-pill my-2">
                                     <div class="btn-group rounded-pill dropend w-100">
-                                        <button id="tipo" type="button" class="filtro btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button id="genero" type="button" class="filtro btn text-primary rounded-pill dropdown-toggle mondapick-font fs-6" data-bs-toggle="dropdown" aria-expanded="false">
                                             Tipo
                                         </button>
                                         <ul class="menu dropdown-menu mx-5 bg-transparent border-0">
-                                            <?php if (!empty($tipos)): ?>
-                                                <?php foreach ($tipos as $tipo): ?>
+                                            <?php if (!empty($generos)): ?>
+                                                <?php foreach ($generos as $genero): ?>
                                                     <li class="dropdown-item rounded-pill my-1 text-white text-start px-5 fw-semibold fs-5 bg-blue">
-                                                        <input class="input form-check-input" type="checkbox" name="tipo[]" value="<?php echo htmlspecialchars($tipo); ?>" aria-label="Checkbox" <?php echo isChecked('tipo', $tipo); ?>>
-                                                        <?php echo htmlspecialchars($tipo); ?>
+                                                        <input class="input form-check-input" type="checkbox" name="genero[]" value="<?php echo htmlspecialchars($genero); ?>" aria-label="Checkbox" <?php echo isChecked('genero', $genero); ?>>
+                                                        <?php echo htmlspecialchars($genero); ?>
                                                     </li>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
@@ -211,13 +210,10 @@ function isSelected($name, $value) {
                                     <?php echo htmlspecialchars($libro["titulo"]); ?>
                                 </p>
                                 <p class="fs-3 m-0">
-                                    <?php echo htmlspecialchars($libro["autor"]); ?>
-                                </p>
-                                <p class="fs-3 m-0">
                                     <?php echo htmlspecialchars($libro["año"]); ?>
                                 </p>
                                 <p class="fs-3 m-0">
-                                    <?php echo htmlspecialchars($libro["tipo"]); ?>
+                                    <?php echo htmlspecialchars($libro["genero"]); ?>
                                 </p>
                             </a>
                         </div>

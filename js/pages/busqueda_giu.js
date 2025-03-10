@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
     const filtrosForm = document.getElementById('filtros-form');
     const inputs = Array.from(document.getElementsByClassName('input'));
-    const tipo = document.getElementById('tipo');
+    const genero = document.getElementById('genero');
     const pensamiento = document.getElementById('pensamiento');
     const pais = document.getElementById('pais');
     const ano = document.getElementById('ano');
     const idioma = document.getElementById('idioma');
-    const filtros = [tipo, pensamiento, pais, ano, idioma].filter(Boolean);
+    const filtros = [genero, pensamiento, pais, ano, idioma].filter(Boolean);
     const filtroPadre = document.getElementById('filtro-padre');
     const menuPadre = document.getElementById('menu-padre');
     const botonesPadre = Array.from(document.getElementsByClassName('boton-padre'));

@@ -119,8 +119,6 @@ if($stmt = $mysqli1->prepare($sql)) {
 
     //Cerrar statment para limpiar memoria.
     $stmt->close();
-} else {
-    die("Error en prepare(): " . $mysqli1->error);
 }
 
 // Mantener los filtros seleccionados
