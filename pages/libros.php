@@ -316,7 +316,7 @@ function isSelected($name, $value) {
 
         <div class="gradient"></div>
 
-        <section>
+        <section class="pb-5">
             <?php if (!empty($libros)): ?>
                 <?php foreach ($libros as $libro): ?>
                     <article class="row align-items-start m-5">

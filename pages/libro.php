@@ -36,17 +36,17 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                     "titulo" => $fila["libro_titulo"],
                     "año" => $fila["libro_año"],
                     "pensamiento" => $fila["libro_pensamiento"],
-                    "tipo" => $fila["libro_tipo"],
+                    "genero" => $fila["libro_tipo"],
                     "isbn" => $fila["libro_isbn"],
                     "enlace" => $fila["libro_enlace"],
                     "resumen" => $fila["libro_resumen"],
-                    "autores" => [],
+                    "autores" => []
                 ];
             }
 
             // Consulta de los autores.
             $autores_id = isset($libro["autores"]) ? array_column($libro["autores"], "autor_id") : [];
-            if (!in_array($fila["autor_id"], $autores_id) && $fila["autor_id"] !== null) {
+            if(!in_array($fila["autor_id"], $autores_id) && $fila["autor_id"] !== null) {
                 $libro["autores"][] = [
                     "autor_id" => $fila["autor_id"],
                     "autor_nombre" => $fila["autor_nombre"]
@@ -65,8 +65,8 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     }
 
     // Consulta de comentarios.
-    $sql = "SELECT tbl_comentarios.comentario_texto FROM tbl_comentarios WHERE tbl_comentarios.libro_id = ?";
-    if ($stmt = $mysqli1->prepare($sql)) {
+    $sql = "SELECT comentario_texto FROM tbl_comentarios WHERE libro_id = ?";
+    if($stmt = $mysqli1->prepare($sql)) {
         $stmt->bind_param("i", $libro_id);
         $stmt->execute();
         $resultado = $stmt->get_result();
@@ -74,14 +74,9 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         while ($fila = $resultado->fetch_assoc()) {
             $comentarios[] = $fila["comentario_texto"];
         }
+
         // Cerrar statment para limpiar memoria.
         $stmt->close();
-
-        // Redirección en caso de no encontrar el comentario.
-        if(empty($comentarios)) {
-            header("Location: libros.php");
-            exit();
-        };
     }
 }
 
@@ -185,7 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?php echo htmlspecialchars($libro["pensamiento"]); ?>
                         </p>
                         <p class="fs-2 fw-light my-4 ms-2 text-blue montserrat-font">
-                            <?php echo htmlspecialchars($libro["tipo"]); ?>
+                            <?php echo htmlspecialchars($libro["genero"]); ?>
                         </p>
                         <p class="fs-4 fw-light my-4 ms-2 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["isbn"] ?? "", ENT_QUOTES, 'UTF-8'); ?>
@@ -200,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php echo htmlspecialchars($libro["resumen"]); ?>
                     </p>
                 </article>
-                <article class="texto m-5">
+                <article class="texto m-5 pb-5">
                     
                     <!-- Publicación comentarios. -->
                     <h1 class="text-blue montserrat-font fs-1 mb-4 ms-5">

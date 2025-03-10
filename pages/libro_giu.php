@@ -8,64 +8,81 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $giu_id = $_GET['id'];
 
     //Consulta de libro
-    $query = "SELECT giu_imagen, giu_titulo, giu_año, giu_tipo, giu_isbn, giu_enlace, giu_resumen FROM tbl_libros_giu 
-    WHERE giu_id = ?";
-    $stmt = $mysqli1->prepare($query);
-    $stmt->bind_param("i", $giu_id);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-    if ($fila = $resultado->fetch_assoc()) {
+    $query = "SELECT libro_imagen, libro_titulo, libro_año, libro_tipo, libro_isbn, libro_enlace, libro_resumen FROM tbl_libros 
+    WHERE libro_id = ?";
+    if($stmt = $mysqli1->prepare($query)) {
+        $stmt->bind_param("i", $giu_id);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $libro = [];
+        while ($fila = $resultado->fetch_assoc()) {
+            if(empty($libro)) {
 
-        // Asignación de datos.
-        $libro = [
-            "id" => $giu_id,
-            "imagen" => $fila["giu_imagen"],
-            "titulo" => $fila["giu_titulo"],
-            "año" => $fila["giu_año"],
-            "tipo" => $fila["giu_tipo"],
-            "isbn" => $fila["giu_isbn"],
-            "enlace" => $fila["giu_enlace"],
-            "resumen" => $fila["giu_resumen"],
-            "comentarios" => []
-        ];
-    } else {
-        header("Location: busqueda_giu.php");
-        exit();
+                // Asignación de datos.
+                $libro = [
+                    "id" => $giu_id,
+                    "imagen" => $fila["libro_imagen"],
+                    "titulo" => $fila["libro_titulo"],
+                    "año" => $fila["libro_año"],
+                    "genero" => $fila["libro_tipo"],
+                    "isbn" => $fila["libro_isbn"],
+                    "enlace" => $fila["libro_enlace"],
+                    "resumen" => $fila["libro_resumen"],
+                    "comentarios" => []
+                ];
+            }
+        }
+
+        // Cerrar statment para limpiar memoria.
+        $stmt->close();
+
+        // Redirección en caso de no encontrar el libro.
+        if(empty($libro)) {
+            header("Location: busqueda_giu.php");
+            exit();
+        };
     }
 
     // Consulta de comentarios.
-    $query = "SELECT comentario_texto FROM tbl_comentarios_giu WHERE giu_id = ?";
-    $stmt = $mysqli1->prepare($query);
-    $stmt->bind_param("i", $giu_id);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-    while ($fila = $resultado->fetch_assoc()) {
-        $libro["comentarios"][] = $fila["comentario_texto"];
+    $sql = "SELECT comentario_texto FROM tbl_comentarios WHERE libro_id = ?";
+    if($stmt = $mysqli1->prepare($sql)) {
+        $stmt->bind_param("i", $giu_id);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        while ($fila = $resultado->fetch_assoc()) {
+            $comentarios[] = $fila["comentario_texto"];
+        }
+
+        // Cerrar statment para limpiar memoria.
+        $stmt->close();
     }
-} else {
-    header("Location: busqueda_giu.php");
-    exit();
 }
 
 // Publicar comentario.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $comentario = trim($_POST["comentario"]);
-    $giu_id = $_POST["giu_id"];
+    $giu_id = $_POST["libro_id"];
 
     if (!empty($comentario) && is_numeric($giu_id)) {
 
         // Insertar el comentario en la base de datos
-        $query = "INSERT INTO tbl_comentarios_giu (giu_id, comentario_texto) VALUES (?, ?)";
-        $stmt = $mysqli1->prepare($query);
-        $stmt->bind_param("is", $giu_id, $comentario);
+        $query = "INSERT INTO tbl_comentarios (libro_id, comentario_texto) VALUES (?, ?)";
+        if($stmt = $mysqli1->prepare($query)) {
+            $stmt->bind_param("is", $giu_id, $comentario);
+            
+            if ($stmt->execute()) {
 
-        if ($stmt->execute()) {
+                // Cerrar statment para limpiar memoria.
+                $stmt->close();
 
-            // Redirección de vuelta al libro para que no se envíe doble vez.
-            header("Location: libro_giu.php?id=" . $giu_id); 
-            exit();
+                // Redirección de vuelta al libro para que no se envíe doble vez.
+                header("Location: libro_giu.php?id=" . $giu_id); 
+                exit();
+            } else {
+                echo "Error al guardar el comentario.";
+            }
         } else {
-            echo "Error al guardar el comentario.";
+            echo "Error al preparar la consulta SQL.";
         }
     } else {
         echo "Comentario vacío o ID de libro inválido.";
@@ -108,6 +125,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="gradient"></div>
 
         <section>
+
+                <!-- Consulta libro. -->
                 <article class="row align-items-start m-5">
                     <div class="col-4 text-center my-3">
                         <?php if (!empty($libro["imagen"])): ?>
@@ -127,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?php echo htmlspecialchars($libro["año"]); ?>
                         </p>
                         <p class="fs-1 fw-light my-4 text-blue montserrat-font">
-                            <?php echo htmlspecialchars($libro["tipo"]); ?>
+                            <?php echo htmlspecialchars($libro["genero"]); ?>
                         </p>
                         <p class="fs-3 fw-light my-4 text-blue montserrat-font">
                             <?php echo htmlspecialchars($libro["isbn"] ?? "", ENT_QUOTES, 'UTF-8'); ?>
@@ -142,16 +161,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php echo htmlspecialchars($libro["resumen"]); ?>
                     </p>
                 </article>
-                <article class="texto m-5">
+                <article class="texto m-5 pb-5">
+
+                    <!-- Publicación comentarios. -->
                     <h1 class="text-blue montserrat-font fs-1 mb-4 ms-5">
                         Comentarios
                     </h1>
                     <form id="comentarioForm" class="border border-5 border-primary py-3 px-4 mb-3 rounded-pill text-start ms-5" action="libro_giu.php?id=<?php echo htmlspecialchars($giu_id); ?>" method="POST">
-                        <input type="hidden" name="giu_id" value="<?php echo isset($libro['id']) ? htmlspecialchars($libro['id'])  : ''; ?>">
+                        <input type="hidden" name="libro_id" value="<?php echo isset($libro['id']) ? htmlspecialchars($libro['id'])  : ''; ?>">
                         <input id="comentario" name="comentario" class="bg-transparent border border-0 mondapick-font fs-3 text-blue" type="text" placeholder="Agrega un comentario.">
                     </form>
-                    <?php if (!empty($libro["comentarios"])): ?>
-                        <?php foreach ($libro["comentarios"] as $comentario): ?>
+
+                    <!-- Consulta comentarios. -->
+                    <?php if (!empty($comentarios)): ?>
+                        <?php foreach ($comentarios as $comentario): ?>
                             <div class="row align-items-start m-3 mt-4">
                                 <div class="col-auto rounded-circle">
                                     <img class="mt-4 ms-3" src="../img/perfil.png" alt="foto de perfil">
